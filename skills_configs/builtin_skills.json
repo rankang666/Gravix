@@ -1,0 +1,108 @@
+[
+  {
+    "skill_id": "echo",
+    "name": "Echo Skill",
+    "version": "1.0.0",
+    "description": "A simple skill that echoes back the input message",
+    "category": "utility",
+    "enabled": true,
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "The message to echo back"
+        }
+      },
+      "required": ["message"]
+    },
+    "implementation": {
+      "type": "python_class",
+      "class_path": "app.skills.builtin.echo.EchoSkill",
+      "method": "execute"
+    },
+    "timeout": 10
+  },
+  {
+    "skill_id": "system_info",
+    "name": "System Information",
+    "version": "1.0.0",
+    "description": "Get system information such as CPU, memory, and disk usage",
+    "category": "system",
+    "enabled": true,
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "info_type": {
+          "type": "string",
+          "enum": ["cpu", "memory", "disk", "all"],
+          "description": "Type of system information to retrieve"
+        }
+      },
+      "required": ["info_type"]
+    },
+    "implementation": {
+      "type": "python_class",
+      "class_path": "app.skills.builtin.system_info.SystemInfoSkill",
+      "method": "execute"
+    },
+    "timeout": 30
+  },
+  {
+    "skill_id": "funboost_task",
+    "name": "Funboost Task Executor",
+    "version": "1.0.0",
+    "description": "Execute funboost tasks asynchronously through the queue system",
+    "category": "task_execution",
+    "enabled": true,
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "queue_name": {
+          "type": "string",
+          "description": "Name of the funboost queue to submit task to"
+        },
+        "task_params": {
+          "type": "object",
+          "description": "Parameters for the task"
+        },
+        "wait_for_result": {
+          "type": "boolean",
+          "description": "Whether to wait for task completion",
+          "default": false
+        }
+      },
+      "required": ["queue_name"]
+    },
+    "implementation": {
+      "type": "python_class",
+      "class_path": "app.skills.builtin.funboost_task.FunboostTaskSkill",
+      "method": "execute"
+    },
+    "timeout": 300
+  },
+  {
+    "skill_id": "calculate",
+    "name": "Calculator",
+    "version": "1.0.0",
+    "description": "Perform basic mathematical calculations",
+    "category": "utility",
+    "enabled": true,
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "expression": {
+          "type": "string",
+          "description": "Mathematical expression to evaluate (e.g., '2 + 2')"
+        }
+      },
+      "required": ["expression"]
+    },
+    "implementation": {
+      "type": "python_class",
+      "class_path": "app.skills.builtin.calculate.CalculateSkill",
+      "method": "execute"
+    },
+    "timeout": 10
+  }
+]
