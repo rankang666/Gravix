@@ -66,7 +66,8 @@ class ChatServer:
         self.sessions: Dict[str, ChatSession] = {}
         self.clients: Dict[str, WebSocketServerProtocol] = {}
 
-        # Build system prompt with available tools
+        # System prompt will be built on first use
+        self._system_prompt = system_prompt
         self.system_prompt = system_prompt or self._build_system_prompt()
 
     def _build_system_prompt(self) -> str:
@@ -97,8 +98,11 @@ You have access to the following tools and capabilities:
         if self.mcp_bridge:
             prompt += "## Available MCP Tools\n\n"
             try:
-                # Get connected MCP servers
-                servers = self.mcp_bridge.get_connected_servers() if hasattr(self.mcp_bridge, 'get_connected_servers') else []
+                # Get connected MCP servers (synchronous access to manager.clients)
+                if hasattr(self.mcp_bridge, 'manager') and self.mcp_bridge.manager:
+                    servers = list(self.mcp_bridge.manager.clients.keys())
+                else:
+                    servers = []
 
                 if servers:
                     prompt += f"Connected MCP Servers: {', '.join(servers)}\n\n"

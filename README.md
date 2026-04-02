@@ -1,249 +1,306 @@
-# Gravix - Skills, MCP & Chat Platform
+# Gravix - AI Agent Platform with Skills, MCP & LLM
 
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104%2B-green)](https://fastapi.tiangolo.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-一个支持**Skills配置**、**MCP协议**和**Web对话**的综合任务处理平台，基于Funboost分布式任务队列框架。
+一个功能强大的**AI Agent平台**，集成**Skills系统**、**MCP协议**、**LLM对话**和**任务队列**，支持快速构建智能应用。
 
-## ✨ 特性
+## ✨ 核心特性
 
-- 🎯 **Skills系统** - 可配置、可扩展的技能调用机制（类似Claude的Function Calling）
-- 🔄 **MCP协议** - 双向支持，既作为Server也作为Client
-- 💬 **Web对话** - WebSocket实时聊天界面
-- ⚡ **高性能** - 基于Funboost异步任务队列
-- 🚀 **REST API** - FastAPI构建的管理接口
+### 🎯 Skills系统
+- **可配置的技能调用** - 类似Claude的Function Calling
+- **4个内置技能** - calculate, echo, system_info, funboost_task
+- **自定义技能** - 支持扩展和配置
+- **异步执行** - 基于Funboost的高性能任务队列
+
+### 🔄 MCP协议集成
+- **DataWorks集成** - 186个阿里云DataWorks工具
+- **双向支持** - 既可作为Server也可作为Client
+- **stdio/SSE传输** - 灵活的通信方式
+- **多服务器管理** - 支持连接多个MCP服务器
+
+### 💬 智能对话
+- **WebSocket实时聊天** - 低延迟的双向通信
+- **LLM集成** - 支持Claude和OpenAI
+- **工具调用** - 对话中直接调用Skills和MCP工具
+- **会话管理** - 完整的对话历史和上下文
+
+### 🚀 REST API
+- **FastAPI框架** - 高性能异步API
+- **Swagger文档** - 自动生成的API文档
+- **认证支持** - 安全的API访问
+- **健康检查** - 服务状态监控
+
+### ⚡ 高性能
+- **异步架构** - 基于asyncio的异步处理
+- **任务队列** - Funboost分布式任务队列
+- **连接池** - 优化的数据库和API连接
+- **缓存机制** - 智能的结果缓存
 
 ## 🚀 快速开始
 
+### 1. 安装依赖
+
 ```bash
+# 创建虚拟环境（推荐）
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# 或 venv\Scripts\activate  # Windows
+
 # 安装依赖
 pip install -r requirements.txt
-
-# 测试Skills系统
-python3 test_skills.py
-
-# 启动完整服务（Chat + Skills）
-python3 run_all.py
-
-# 或仅启动REST API
-python3 start_api.py
 ```
 
-## 📖 详细文档
+### 2. 配置环境变量
 
-查看 [GRAVIX_GUIDE.md](GRAVIX_GUIDE.md) 获取完整的使用指南。
+```bash
+# 复制配置模板
+cp .env.example .env
+
+# 编辑配置文件
+nano .env  # 或使用你喜欢的编辑器
+```
+
+**必需配置：**
+
+```bash
+# LLM配置（至少配置一个）
+LLM_PROVIDER=claude  # 或 openai
+ANTHROPIC_API_KEY=your_anthropic_api_key  # Claude
+# OPENAI_API_KEY=your_openai_api_key  # OpenAI
+
+# DataWorks配置（可选，用于MCP功能）
+ALIBABA_CLOUD_ACCESS_KEY_ID=your_access_key_id
+ALIBABA_CLOUD_ACCESS_KEY_SECRET=your_access_key_secret
+ALIBABA_CLOUD_REGION_ID=cn-hangzhou
+```
+
+### 3. 启动服务
+
+```bash
+# 启动所有服务（推荐）
+python run_all.py
+
+# 或仅启动API服务
+python start_api.py
+```
+
+### 4. 访问应用
+
+- **Web UI**: 打开浏览器访问 `file:///path/to/web/static/index.html`
+  或直接双击 `web/static/index.html` 文件
+- **API文档**: http://localhost:8000/docs
+- **WebSocket**: ws://localhost:8765
+
+## 📖 使用指南
+
+### Web界面使用
+
+1. **打开Web UI**
+   ```bash
+   # 在浏览器中打开
+   open web/static/index.html  # Mac
+   # 或双击文件
+   ```
+
+2. **使用快捷按钮**
+   - 📖 **Help** - 查看帮助信息
+   - 🔧 **Skills** - 列出可用技能
+   - ⚡ **MCP列表** - 显示MCP工具
+   - 📁 **项目** - 查看DataWorks项目
+   - 🕐 **时间转换** - 时间戳转换示例
+   - 📊 **History** - 对话历史
+   - 🗑️ **Clear** - 清空对话
+
+3. **对话中使用工具**
+   ```
+   你好                    # 普通对话
+   /skills                # 查看技能列表
+   2+2等于多少            # 自动调用calculate技能
+   dataworks有多少项目     # 自动调用MCP工具
+   ::system_info{}        # 直接调用工具
+   ```
+
+### 命令行使用
+
+```bash
+# 测试Skills
+python -c "
+from app.skills.executor import SkillExecutor
+executor = SkillExecutor()
+result = executor.execute('calculate', {'expression': '2+2'})
+print(result)
+"
+
+# 测试MCP
+python -c "
+import asyncio
+from app.mcp.manager import MCPManager
+
+async def test():
+    manager = MCPManager()
+    await manager.initialize()
+    result = await manager.call_tool('dataworks', 'ListProjects', {})
+    print(result)
+
+asyncio.run(test())
+"
+```
 
 ## 📁 项目结构
 
 ```
 Gravix/
-├── app/
-│   ├── skills/              # Skills模块 (NEW)
+├── app/                      # 应用主目录
+│   ├── skills/              # Skills模块
 │   │   ├── base.py          # 基础类
 │   │   ├── registry.py      # 技能注册表
 │   │   ├── executor.py      # 执行器
 │   │   └── builtin/         # 内置技能
 │   │
-│   ├── mcp/                 # MCP协议模块 (NEW)
+│   ├── mcp/                 # MCP协议模块
 │   │   ├── protocol.py      # 协议定义
-│   │   ├── server.py        # MCP服务器
 │   │   ├── client.py        # MCP客户端
+│   │   ├── manager.py       # MCP服务器管理
 │   │   └── adapters/        # 传输适配器
 │   │
-│   ├── chat/                # Chat模块 (NEW)
+│   ├── chat/                # 聊天模块
 │   │   ├── server.py        # WebSocket服务器
-│   │   ├── session.py       # 会话管理
-│   │   └── integration/     # Skills/MCP桥接
+│   │   ├── tool_calling.py  # 工具调用
+│   │   └── integration/     # 集成桥接
 │   │
-│   ├── api/                 # REST API (NEW)
+│   ├── llm/                 # LLM集成
+│   │   ├── claude.py        # Claude提供商
+│   │   ├── openai.py        # OpenAI提供商
+│   │   └── service.py       # LLM服务
+│   │
+│   ├── api/                 # REST API
 │   │   ├── app.py           # FastAPI应用
 │   │   └── routes/          # API路由
 │   │
-│   ├── config/              # 配置层
-│   │   ├── __init__.py
-│   │   └── funboost_config.py
-│   │
-│   ├── consumers/           # funboost 消费者
-│   │   ├── __init__.py
-│   │   └── hello.py
-│   │
-│   ├── publisher/           # 任务提交入口
-│   │   ├── __init__.py
-│   │   └── submit.py
-│   │
-│   ├── schemas/             # 数据模型 (NEW)
-│   ├── services/            # 业务服务
-│   ├── state/               # 状态管理
-│   ├── trigger/             # 触发器
+│   ├── config/              # 配置
+│   ├── schemas/             # 数据模型
 │   └── utils/               # 工具函数
 │
-├── skills_configs/          # Skills配置 (NEW)
-│   ├── builtin_skills.json
-│   └── custom_skills/
+├── skills/                  # 技能脚本
+│   ├── calculate/           # 计算器
+│   ├── echo/                # 回显
+│   ├── system_info/         # 系统信息
+│   └── funboost_task/       # Funboost任务
 │
-├── web/                     # Web前端 (NEW)
+├── web/                     # Web前端
 │   └── static/
-│       └── index.html
+│       └── index.html       # 聊天界面
 │
-├── main.py                  # 入口文件
-├── run_all.py              # 启动所有服务 (NEW)
-├── start_api.py            # 启动REST API (NEW)
-├── test_skills.py          # Skills测试 (NEW)
+├── tests/                   # 测试文件
+├── archive/                 # 归档文件
+├── run_all.py              # 启动脚本
 ├── requirements.txt        # 依赖列表
-├── GRAVIX_GUIDE.md        # 详细指南 (NEW)
+├── .env.example            # 配置模板
 └── README.md               # 本文件
 ```
 
-## 🎯 核心功能
+## 🎯 核心功能详解
 
 ### 1. Skills系统
 
-通过JSON配置文件定义和管理可执行技能：
+Skills是可执行的函数，可通过对话或API调用：
 
-```json
-{
-  "skill_id": "echo",
-  "name": "Echo Skill",
-  "description": "Echo back the input",
-  "parameters": {
-    "type": "object",
-    "properties": {
-      "message": {"type": "string"}
-    }
-  },
-  "implementation": {
-    "type": "python_class",
-    "class_path": "app.skills.builtin.echo.EchoSkill"
-  }
-}
+**内置技能：**
+- `calculate` - 数学计算
+- `echo` - 文本回显
+- `system_info` - 系统信息查询
+- `funboost_task` - Funboost任务执行
+
+**调用格式：**
+```
+::skill_name{param1=value1}
+::calculate{expression=2+2*3}
+::system_info{info_type=all}
 ```
 
-**使用示例**：
-```python
-from app.skills.executor import SkillExecutor
-from app.skills.registry import SkillRegistry
+### 2. MCP工具调用
 
-registry = SkillRegistry()
-executor = SkillExecutor(registry)
+支持186个DataWorks工具：
 
-result = await executor.execute('echo', {'message': 'Hello!'})
+**调用格式：**
+```
+::server.tool_name{}
+::dataworks.ListProjects{}
+::dataworks.ConvertTimestamps{Timestamps=[1714567890]}
 ```
 
-### 2. MCP协议支持
-
-**作为MCP Server**：
-```python
-from app.mcp.server import MCPServer
-
-server = MCPServer("gravix-server", "1.0.0")
-server.register_tool("my_tool", "Description", schema, handler)
-response = await server.handle_message(message_json)
+**命令方式：**
+```
+/mcp_call dataworks.ListProjects {}
+/mcp_call dataworks.ConvertTimestamps {"Timestamps": [1714567890]}
 ```
 
-**作为MCP Client**：
-```python
-from app.mcp.client import MCPClient
+### 3. LLM对话
 
-client = MCPClient()
-await client.connect()
-result = await client.call_tool("tool_name", {"param": "value"})
+集成Claude和OpenAI，支持：
+- 上下文感知对话
+- 自动工具调用
+- 流式响应
+- 错误处理
+
+## 🔧 配置说明
+
+### LLM配置
+
+**Claude:**
+```bash
+LLM_PROVIDER=claude
+ANTHROPIC_API_KEY=sk-ant-xxx
+LLM_MODEL=claude-3-5-sonnet-20241022
 ```
 
-### 3. Web对话界面
+**OpenAI:**
+```bash
+LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-xxx
+LLM_MODEL=gpt-4o
+```
 
-- WebSocket实时通信
-- 集成Skills和MCP
-- 现代化UI设计
-
-访问：`web/static/index.html`
-
-### 4. REST API
+### DataWorks配置
 
 ```bash
-# 启动API服务
-python3 start_api.py
-
-# 访问文档
-open http://localhost:8000/docs
+ALIBABA_CLOUD_ACCESS_KEY_ID=your_key_id
+ALIBABA_CLOUD_ACCESS_KEY_SECRET=your_secret
+ALIBABA_CLOUD_REGION_ID=cn-hangzhou
 ```
 
-## 📊 内置Skills
+支持的Region：
+- `cn-hangzhou` (华东1)
+- `cn-beijing` (华北2)
+- `cn-shenzhen` (华南1)
+- `cn-shanghai` (华东2)
 
-| Skill ID | 名称 | 功能 |
-|----------|------|------|
-| `echo` | 回显技能 | 简单的消息回显 |
-| `calculate` | 计算器 | 数学表达式计算 |
-| `system_info` | 系统信息 | CPU、内存、磁盘使用情况 |
-| `funboost_task` | Funboost任务 | 执行Funboost队列任务 |
+### 服务端口配置
 
-## 🔧 配置
-
-### Skills配置
-
-编辑 `skills_configs/builtin_skills.json` 或在 `skills_configs/custom_skills/` 添加新配置。
-
-### Funboost配置
-
-编辑 `funboost_config.py` 配置消息队列（Redis、RabbitMQ等）。
-
-## 📝 示例
-
-### 创建自定义Skill
-
-1. **定义Skill类**：
+编辑 `run_all.py`:
 ```python
-# app/skills/builtin/my_skill.py
-from app.skills.base import BaseSkill, SkillResult
+# WebSocket服务
+WS_HOST = "0.0.0.0"
+WS_PORT = 8765
 
-class MySkill(BaseSkill):
-    async def execute(self, param1: str, **kwargs) -> SkillResult:
-        return SkillResult(success=True, data=f"Processed: {param1}")
+# REST API服务
+API_HOST = "0.0.0.0"
+API_PORT = 8000
 ```
 
-2. **添加配置**：
-```json
-// skills_configs/custom_skills/my_skill.json
-{
-  "skill_id": "my_skill",
-  "name": "My Custom Skill",
-  "enabled": true,
-  "implementation": {
-    "class_path": "app.skills.builtin.my_skill.MySkill"
-  }
-}
-```
+## 📚 相关文档
 
-3. **使用**：
-```python
-result = await executor.execute('my_skill', {'param1': 'test'})
-```
+- [GRAVIX_GUIDE.md](GRAVIX_GUIDE.md) - 完整使用指南
+- [LLM_SETUP_GUIDE.md](LLM_SETUP_GUIDE.md) - LLM配置指南
+- [DATAWORKS_MCP_INTEGRATION.md](DATAWORKS_MCP_INTEGRATION.md) - DataWorks集成文档
+- [CREATING_SKILLS.md](CREATING_SKILLS.md) - 创建自定义技能
+- [CHANGELOG.md](CHANGELOG.md) - 版本更新记录
 
-## 🧪 测试
+## 🤝 贡献
 
-```bash
-# 测试Skills系统
-python3 test_skills.py
-
-# 测试API
-curl http://localhost:8000/api/skills/
-curl -X POST http://localhost:8000/api/skills/execute \
-  -H "Content-Type: application/json" \
-  -d '{"skill_id": "echo", "parameters": {"message": "test"}}'
-```
-
-## 🛠️ 开发
-
-### 添加新的传输适配器
-
-在 `app/mcp/adapters/` 创建新文件并实现：
-- `connect()`
-- `send_and_receive()`
-- `disconnect()`
-
-### 扩展Chat功能
-
-修改 `app/chat/server.py` 添加新的消息处理逻辑。
+欢迎提交Issue和Pull Request！
 
 ## 📄 许可证
 
@@ -251,10 +308,11 @@ MIT License
 
 ## 🙏 致谢
 
-- [Funboost](https://github.com/yuzhen666666/funboost) - 分布式任务队列框架
-- [FastAPI](https://fastapi.tiangolo.com/) - 现代Web框架
-- [Model Context Protocol](https://modelcontextprotocol.io/) - AI协议标准
+- [Funboost](https://github.com/yhyzhyz/funboost) - 分布式任务队列框架
+- [Anthropic](https://www.anthropic.com) - Claude API
+- [OpenAI](https://openai.com) - GPT API
+- [Model Context Protocol](https://modelcontextprotocol.io) - MCP协议
 
 ---
 
-**查看 [GRAVIX_GUIDE.md](GRAVIX_GUIDE.md) 获取完整文档！**
+**Made with ❤️ by the Gravix Team**
