@@ -5,6 +5,51 @@ All notable changes to the Gravix project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-04-04
+
+### Added
+
+#### 部署和运维
+- **Docker支持** - 容器化部署
+  - Dockerfile - 优化的多阶段构建
+  - docker-compose.yml - 一键启动配置
+  - .dockerignore - 减小镜像大小
+  - DOCKER.md - 完整的Docker部署指南
+- **健康检查** - 服务健康状态监控
+  - `/health` 端点
+  - Docker健康检查配置
+  - 自动重启策略
+
+#### 稳定性增强
+- **ResilientLLMProvider** - 弹性LLM提供商
+  - 自动重试机制（指数退避）
+  - 多提供商自动切换
+  - 请求限流保护
+  - 优雅降级方案
+- **API密钥备用** - 支持配置备用API密钥
+  - ANTHROPIC_API_KEY_FALLBACK
+  - OpenAI作为Claude的备用
+  - 自动故障切换
+
+### Changed
+
+#### 配置优化
+- 更新 .env.example 包含稳定性参数
+- 添加 LLM_MAX_RETRIES, LLM_RETRY_DELAY, LLM_RATE_LIMIT
+- 改进错误提示和用户引导
+
+#### 文档更新
+- README.md - 添加Docker快速开始
+- LLM_RESILIENCE.md - 稳定性优化指南
+- DOCKER.md - Docker部署完整文档
+
+### Performance
+
+#### 性能优化
+- 请求限流防止API throttling
+- 智能重试减少失败率
+- 资源限制和优化建议
+
 ## [1.0.0] - 2026-04-02
 
 ### Added

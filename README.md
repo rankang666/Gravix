@@ -40,6 +40,35 @@
 
 ## 🚀 快速开始
 
+### 方式1：使用Docker（推荐）
+
+```bash
+# 1. 配置环境变量
+cp .env.example .env
+nano .env  # 编辑配置，填入API密钥
+
+# 2. 启动服务
+docker-compose up -d
+
+# 3. 查看日志
+docker-compose logs -f
+
+# 4. 访问应用
+# Web UI: 打开 web/static/index.html
+# WebSocket: ws://localhost:8765
+# API文档: http://localhost:8000/docs
+```
+
+**Docker优势：**
+- ✅ 开箱即用，无需Python环境
+- ✅ 环境隔离，不会影响系统
+- ✅ 一键启动和停止
+- ✅ 易于部署和维护
+
+**详细文档：** 查看 [DOCKER.md](DOCKER.md)
+
+### 方式2：本地安装
+
 ### 1. 安装依赖
 
 ```bash

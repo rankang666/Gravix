@@ -3405,3 +3405,5 @@ Press Ctrl+C to stop all services
 2026-04-04 20:03:29.974 | INFO     | app.chat.tool_calling:execute:137 - Executing skill: system_info
 2026-04-04 20:03:29.974 | INFO     | app.chat.integration.skills_bridge:execute:57 - Executing skill via bridge: system_info
 2026-04-04 20:03:29.975 | INFO     | app.skills.executor:execute:115 - Skill 'system_info' executed successfully in 0.00s
+2026-04-04 20:04:00.543 | INFO     | app.llm.claude:_init_client:51 - Claude provider initialized with model: claude-3-5-sonnet-20241022
+2026-04-04 20:04:00.544 | INFO     | app.llm.service:_init_provider:133 - LLM service initialized with claude (claude-3-5-sonnet-20241022)

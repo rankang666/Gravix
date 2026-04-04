@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  gravix:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gravix-app
+    restart: unless-stopped
+    ports:
+      - "8765:8765"  # WebSocket chat server
+      - "8000:8000"   # REST API
+    environment:
+      # LLM Configuration
+      - LLM_PROVIDER=claude
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - LLM_MODEL=claude-3-5-sonnet-20241022
+
+      # DataWorks Configuration
+      - ALIBABA_CLOUD_ACCESS_KEY_ID=${ALIBABA_CLOUD_ACCESS_KEY_ID}
+      - ALIBABA_CLOUD_ACCESS_KEY_SECRET=${ALIBABA_CLOUD_ACCESS_KEY_SECRET}
+      - ALIBABA_CLOUD_REGION_ID=${ALIBABA_CLOUD_REGION_ID:-cn-hangzhou}
+
+      # Resilience Settings
+      - LLM_MAX_RETRIES=${LLM_MAX_RETRIES:-3}
+      - LLM_RETRY_DELAY=${LLM_RETRY_DELAY:-1.0}
+      - LLM_RATE_LIMIT=${LLM_RATE_LIMIT:-0.5}
+
+      # Python Settings
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      # Mount logs directory
+      - ./logs:/app/logs
+      # Mount web static files for development
+      - ./web/static:/app/web/static
+      # Optional: Mount source code for development
+      # - ./app:/app/app
+    networks:
+      - gravix-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  # Optional: Redis for Funboost task queue
+  # Uncomment if you need Redis backend
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: gravix-redis
+  #   restart: unless-stopped
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis-data:/data
+  #   networks:
+  #     - gravix-network
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 3
+
+networks:
+  gravix-network:
+    driver: bridge
+
+# volumes:
+#   redis-data:
