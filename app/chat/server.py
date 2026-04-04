@@ -420,7 +420,31 @@ Examples:
                 logger.error(f"LLM generation error: {e}")
                 import traceback
                 traceback.print_exc()
-                return f"Sorry, I encountered an error: {str(e)}"
+
+                # Graceful degradation: provide helpful message
+                error_msg = str(e)
+
+                # Check if it's a rate limit or API error
+                if '403' in error_msg or 'rate limit' in error_msg.lower():
+                    return """⚠️ AI服务暂时不可用（可能是请求过于频繁）
+
+请稍后再试。在此期间，您仍可使用以下功能：
+
+📌 **命令模式：**
+- /help - 查看所有可用命令
+- /skills - 查看和调用技能
+- /mcp_list - 查看DataWorks工具
+- /mcp_call tool_name {} - 调用MCP工具
+
+📌 **直接调用：**
+- ::calculate{expression=2+2}
+- ::system_info{info_type=all}
+- ::dataworks.ListProjects{}
+
+这些功能无需AI即可正常使用。"""
+
+                else:
+                    return f"⚠️ AI服务遇到错误：{error_msg}\n\n请使用 /help 查看可用命令，或稍后重试。"
 
         # Fallback to simple response
         return f"Received: {message}\n\n(Note: LLM service not configured. Use /help for available commands.)"

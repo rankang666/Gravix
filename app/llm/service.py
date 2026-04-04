@@ -14,6 +14,7 @@ from typing import List, Dict, Any, Optional, AsyncIterator
 from app.llm.base import BaseLLMProvider, Message, LLMResponse
 from app.llm.claude import ClaudeProvider
 from app.llm.openai import OpenAIProvider
+from app.llm.resilient import ResilientLLMProvider, create_resilient_provider
 from app.utils.logger import logger
 
 
@@ -30,6 +31,7 @@ class LLMService:
         provider: str = "claude",
         api_key: str = None,
         model: str = None,
+        resilient: bool = True,
         **kwargs
     ):
         """
@@ -39,10 +41,12 @@ class LLMService:
             provider: Provider name ('claude', 'openai')
             api_key: API key (if None, reads from environment)
             model: Model name
+            resilient: Enable resilient mode with retry and fallback
             **kwargs: Additional provider parameters
         """
         self.provider_name = provider
         self.provider: Optional[BaseLLMProvider] = None
+        self.resilient_enabled = resilient
 
         # Initialize provider
         self._init_provider(api_key, model, **kwargs)
@@ -51,32 +55,82 @@ class LLMService:
         """Initialize the LLM provider"""
         provider_lower = self.provider_name.lower()
 
+        # Collect available providers for resilient mode
+        providers = []
+
         if provider_lower == 'claude':
+            model = model or "claude-3-5-sonnet-20241022"
             api_key = api_key or os.getenv('ANTHROPIC_API_KEY')
             if not api_key:
                 raise ValueError("ANTHROPIC_API_KEY not found")
-            model = model or "claude-3-5-sonnet-20241022"
-            self.provider = ClaudeProvider(
+
+            # Add primary provider
+            providers.append(ClaudeProvider(
                 api_key=api_key,
                 model=model,
                 **kwargs
-            )
+            ))
+
+            # Add fallback provider if available
+            fallback_key = os.getenv('ANTHROPIC_API_KEY_FALLBACK')
+            if fallback_key and fallback_key != api_key:
+                logger.info("Fallback Claude API key found, enabling resilient mode")
+                providers.append(ClaudeProvider(
+                    api_key=fallback_key,
+                    model=model,
+                    **kwargs
+                ))
+
+            # Check if OpenAI is available as fallback
+            openai_key = os.getenv('OPENAI_API_KEY')
+            if openai_key:
+                logger.info("OpenAI API key found, adding as fallback")
+                providers.append(OpenAIProvider(
+                    api_key=openai_key,
+                    model="gpt-4o",
+                    **kwargs
+                ))
 
         elif provider_lower == 'openai':
+            model = model or "gpt-4o"
             api_key = api_key or os.getenv('OPENAI_API_KEY')
             if not api_key:
                 raise ValueError("OPENAI_API_KEY not found")
-            model = model or "gpt-4o"
-            self.provider = OpenAIProvider(
+
+            # Add primary provider
+            providers.append(OpenAIProvider(
                 api_key=api_key,
                 model=model,
                 **kwargs
-            )
+            ))
+
+            # Check if Claude is available as fallback
+            claude_key = os.getenv('ANTHROPIC_API_KEY')
+            if claude_key:
+                logger.info("Claude API key found, adding as fallback")
+                providers.append(ClaudeProvider(
+                    api_key=claude_key,
+                    model="claude-3-5-sonnet-20241022",
+                    **kwargs
+                ))
 
         else:
             raise ValueError(f"Unknown provider: {self.provider_name}")
 
-        logger.info(f"LLM service initialized with {self.provider_name} ({model})")
+        # Use resilient provider if multiple providers available and enabled
+        if self.resilient_enabled and len(providers) > 1:
+            logger.info(f"Using resilient mode with {len(providers)} providers")
+            self.provider = ResilientLLMProvider(
+                providers=providers,
+                max_retries=kwargs.get('max_retries', 3),
+                retry_delay=kwargs.get('retry_delay', 1.0),
+                rate_limit=kwargs.get('rate_limit', 0.5)
+            )
+            logger.info(f"LLM service initialized with resilient {self.provider_name} ({model})")
+        else:
+            # Use single provider
+            self.provider = providers[0]
+            logger.info(f"LLM service initialized with {self.provider_name} ({model})")
 
     async def chat(
         self,
