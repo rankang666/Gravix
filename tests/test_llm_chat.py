@@ -15,7 +15,7 @@ import os
 from pathlib import Path
 
 # Add project root to path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from app.llm.service import LLMService
 from app.llm.base import Message
@@ -31,7 +31,7 @@ async def test_llm():
     print()
 
     # 加载环境变量
-    env_path = Path(__file__).parent / '.env'
+    env_path = Path(__file__).parent.parent / '.env'
     if env_path.exists():
         print(f"✅ 加载环境变量: {env_path}")
         with open(env_path) as f:

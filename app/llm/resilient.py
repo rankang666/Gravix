@@ -145,10 +145,10 @@ class ResilientLLMProvider(BaseLLMProvider):
 
         # Return error response
         return LLMResponse(
-            content=f"抱歉，AI服务暂时不可用。请稍后再试，或使用 /help 查看可用命令。",
+            content="抱歉，AI服务暂时不可用。请稍后再试，或使用 /help 查看可用命令。",
             model=self.model,
             usage={},
-            error=error_msg
+            metadata={'error': error_msg}
         )
 
     async def generate_stream(
@@ -233,7 +233,9 @@ def create_resilient_provider(config: dict) -> ResilientLLMProvider:
                 api_key=api_key,
                 model=model,
                 temperature=temperature,
-                max_tokens=max_tokens
+                max_tokens=max_tokens,
+                base_url=provider_config.get('base_url'),
+                timeout=provider_config.get('timeout', 300.0)
             ))
         else:
             logger.warning(f"Unknown provider type: {provider_type}")

@@ -44,11 +44,13 @@ class LLMResponse:
         model: Model used
         usage: Token usage information
         metadata: Additional metadata
+        error: Error information if generation failed
     """
     content: str
     model: str
     usage: Dict[str, int] = None
     metadata: Dict[str, Any] = None
+    error: str = None
 
     def __post_init__(self):
         if self.usage is None:

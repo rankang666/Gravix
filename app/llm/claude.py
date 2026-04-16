@@ -46,8 +46,17 @@ class ClaudeProvider(BaseLLMProvider):
     def _init_client(self):
         """Initialize Anthropic client"""
         try:
+            import os
             from anthropic import AsyncAnthropic
-            self._client = AsyncAnthropic(api_key=self.api_key)
+
+            # Support custom base_url (e.g., for proxy services like bigmodel.cn)
+            client_kwargs = {'api_key': self.api_key}
+            base_url = os.getenv('ANTHROPIC_BASE_URL')
+            if base_url:
+                client_kwargs['base_url'] = base_url
+                logger.info(f"Using custom base_url: {base_url}")
+
+            self._client = AsyncAnthropic(**client_kwargs)
             logger.info(f"Claude provider initialized with model: {self.model}")
         except ImportError:
             logger.error("Failed to import anthropic. Install with: pip install anthropic")
@@ -108,11 +117,8 @@ class ClaudeProvider(BaseLLMProvider):
             )
 
         except Exception as e:
-            logger.error(f"Claude API error: {e}")
-            return LLMResponse(
-                content=f"Error: {str(e)}",
-                model=self.model
-            )
+            # Re-raise to allow fallback mechanism to work
+            raise RuntimeError(f"Claude API error: {e}") from e
 
     async def generate_stream(
         self,

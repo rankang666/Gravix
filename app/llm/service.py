@@ -58,17 +58,22 @@ class LLMService:
         # Collect available providers for resilient mode
         providers = []
 
+        # Extract base_url from kwargs if present (for both providers)
+        # Try LLM_BASE_URL first, then fallback to provider-specific URLs
+        base_url = kwargs.pop('base_url', None) or os.getenv('LLM_BASE_URL')
+
         if provider_lower == 'claude':
-            model = model or "claude-3-5-sonnet-20241022"
-            api_key = api_key or os.getenv('ANTHROPIC_API_KEY')
+            # Priority: parameter > env var > default
+            model = model or os.getenv('LLM_MODEL', 'claude-3-5-sonnet-20241022')
+            # Try LLM_API_KEY first, then ANTHROPIC_API_KEY
+            api_key = api_key or os.getenv('LLM_API_KEY') or os.getenv('ANTHROPIC_API_KEY')
             if not api_key:
-                raise ValueError("ANTHROPIC_API_KEY not found")
+                raise ValueError("LLM_API_KEY or ANTHROPIC_API_KEY not found")
 
             # Add primary provider
             providers.append(ClaudeProvider(
                 api_key=api_key,
-                model=model,
-                **kwargs
+                model=model
             ))
 
             # Add fallback provider if available
@@ -77,8 +82,7 @@ class LLMService:
                 logger.info("Fallback Claude API key found, enabling resilient mode")
                 providers.append(ClaudeProvider(
                     api_key=fallback_key,
-                    model=model,
-                    **kwargs
+                    model=model
                 ))
 
             # Check if OpenAI is available as fallback
@@ -88,20 +92,23 @@ class LLMService:
                 providers.append(OpenAIProvider(
                     api_key=openai_key,
                     model="gpt-4o",
-                    **kwargs
+                    timeout=float(os.getenv('LLM_API_TIMEOUT', 300.0))
                 ))
 
         elif provider_lower == 'openai':
-            model = model or "gpt-4o"
-            api_key = api_key or os.getenv('OPENAI_API_KEY')
+            # Priority: parameter > env var > default
+            model = model or os.getenv('LLM_MODEL', 'gpt-4o')
+            # Try LLM_API_KEY first, then provider-specific keys
+            api_key = api_key or os.getenv('LLM_API_KEY') or os.getenv('OPENAI_API_KEY') or os.getenv('ANTHROPIC_API_KEY')
             if not api_key:
-                raise ValueError("OPENAI_API_KEY not found")
+                raise ValueError("LLM_API_KEY, OPENAI_API_KEY or ANTHROPIC_API_KEY not found")
 
             # Add primary provider
             providers.append(OpenAIProvider(
                 api_key=api_key,
                 model=model,
-                **kwargs
+                base_url=base_url,
+                timeout=float(os.getenv('OPENAI_API_TIMEOUT', 300.0))
             ))
 
             # Check if Claude is available as fallback
@@ -110,8 +117,7 @@ class LLMService:
                 logger.info("Claude API key found, adding as fallback")
                 providers.append(ClaudeProvider(
                     api_key=claude_key,
-                    model="claude-3-5-sonnet-20241022",
-                    **kwargs
+                    model="claude-3-5-sonnet-20241022"
                 ))
 
         else:
@@ -126,11 +132,18 @@ class LLMService:
                 retry_delay=kwargs.get('retry_delay', 1.0),
                 rate_limit=kwargs.get('rate_limit', 0.5)
             )
-            logger.info(f"LLM service initialized with resilient {self.provider_name} ({model})")
+            # Get actual model and base_url from primary provider
+            actual_model = providers[0].model
+            actual_base_url = getattr(providers[0], 'base_url', None)
+            model_info = f"{actual_model}" + (f"@{actual_base_url}" if actual_base_url else "")
+            logger.info(f"LLM service initialized with resilient {self.provider_name} ({model_info})")
         else:
             # Use single provider
             self.provider = providers[0]
-            logger.info(f"LLM service initialized with {self.provider_name} ({model})")
+            actual_model = providers[0].model
+            actual_base_url = getattr(providers[0], 'base_url', None)
+            model_info = f"{actual_model}" + (f"@{actual_base_url}" if actual_base_url else "")
+            logger.info(f"LLM service initialized with {self.provider_name} ({model_info})")
 
     async def chat(
         self,

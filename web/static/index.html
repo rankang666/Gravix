@@ -314,7 +314,7 @@
         </div>
 
         <div class="typing-indicator" id="typingIndicator">
-            <span>AI is thinking</span><span class="dots"></span>
+            <span id="thinkingText">AI is thinking</span><span class="dots"></span>
         </div>
 
         <div class="quick-actions">
@@ -385,7 +385,10 @@
         }
 
         function handleServerMessage(data) {
-            hideTyping();
+            // Don't hide typing for thinking updates
+            if (data.type !== 'thinking') {
+                hideTyping();
+            }
 
             switch (data.type) {
                 case 'system':
@@ -393,6 +396,10 @@
                     break;
                 case 'chat_response':
                     addMessage('assistant', data.content);
+                    break;
+                case 'thinking':
+                    // Update the thinking text without hiding the indicator
+                    updateThinkingText(data.content || 'AI is thinking');
                     break;
                 case 'skill_response':
                     const skillMsg = data.result.success
@@ -481,6 +488,15 @@
         function hideTyping() {
             typingIndicator.classList.remove('active');
             document.getElementById('sendButton').disabled = false;
+            // Reset thinking text
+            document.getElementById('thinkingText').textContent = 'AI is thinking';
+        }
+
+        function updateThinkingText(text) {
+            const thinkingElement = document.getElementById('thinkingText');
+            if (thinkingElement) {
+                thinkingElement.textContent = text;
+            }
         }
 
         function sendQuickMessage(message) {

@@ -30,7 +30,8 @@ class OpenAIProvider(BaseLLMProvider):
         model: str = "gpt-4o",
         temperature: float = 0.7,
         max_tokens: int = 4096,
-        base_url: str = None
+        base_url: str = None,
+        timeout: float = 300.0
     ):
         """
         Initialize OpenAI provider
@@ -41,9 +42,11 @@ class OpenAIProvider(BaseLLMProvider):
             temperature: Sampling temperature
             max_tokens: Maximum tokens
             base_url: Optional custom base URL (for Azure/custom endpoints)
+            timeout: Request timeout in seconds (default: 300.0)
         """
         super().__init__(api_key, model, temperature, max_tokens)
         self.base_url = base_url
+        self.timeout = timeout
         self._client = None
         self._init_client()
 
@@ -51,12 +54,22 @@ class OpenAIProvider(BaseLLMProvider):
         """Initialize OpenAI client"""
         try:
             from openai import AsyncOpenAI
+            import httpx
+
             client_kwargs = {'api_key': self.api_key}
             if self.base_url:
                 client_kwargs['base_url'] = self.base_url
 
+            # Configure timeout for slow proxies or internal networks
+            client_kwargs['timeout'] = httpx.Timeout(
+                connect=self.timeout,
+                read=self.timeout,
+                write=self.timeout,
+                pool=self.timeout
+            )
+
             self._client = AsyncOpenAI(**client_kwargs)
-            logger.info(f"OpenAI provider initialized with model: {self.model}")
+            logger.info(f"OpenAI provider initialized with model: {self.model}, timeout: {self.timeout}s")
         except ImportError:
             logger.error("Failed to import openai. Install with: pip install openai")
             raise
@@ -106,11 +119,8 @@ class OpenAIProvider(BaseLLMProvider):
             )
 
         except Exception as e:
-            logger.error(f"OpenAI API error: {e}")
-            return LLMResponse(
-                content=f"Error: {str(e)}",
-                model=self.model
-            )
+            # Re-raise to allow fallback mechanism to work
+            raise RuntimeError(f"OpenAI API error: {e}") from e
 
     async def generate_stream(
         self,

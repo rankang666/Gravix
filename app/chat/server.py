@@ -11,14 +11,14 @@
 
 import asyncio
 import json
-from typing import Dict, Set, Optional
+from typing import Dict, Set, Optional, Any
 from datetime import datetime
 import websockets
 from websockets.server import WebSocketServerProtocol
 from app.chat.session import ChatSession
 from app.chat.integration.skills_bridge import SkillsBridge
 from app.chat.integration.mcp_bridge import MCPBridge
-from app.chat.tool_calling import ToolCallParser, ToolExecutor
+from app.chat.tool_calling import ToolCallParser, ToolExecutor, ReActParser, ReActResponse
 from app.llm.service import LLMService
 from app.llm.base import Message
 from app.utils.logger import logger
@@ -66,21 +66,106 @@ class ChatServer:
         self.sessions: Dict[str, ChatSession] = {}
         self.clients: Dict[str, WebSocketServerProtocol] = {}
 
+        # Plan confirmation mode
+        self.require_confirmation = True  # Default: require user confirmation for tool calls
+        self.pending_plans: Dict[str, dict] = {}  # client_id -> pending plan
+
         # System prompt will be built on first use
         self._system_prompt = system_prompt
         self.system_prompt = system_prompt or self._build_system_prompt()
 
     def _build_system_prompt(self) -> str:
-        """Build system prompt with available tools"""
-        prompt = """You are Gravix, a helpful AI assistant integrated with a task queue system.
+        """Build system prompt with available tools and plan-first mode"""
+        prompt = """You are Gravix, a helpful AI assistant with access to various tools.
 
-You have access to the following tools and capabilities:
+## Plan-First Mode: Human-in-the-Loop Execution
+
+**IMPORTANT**: When user questions require tool calls, you must FIRST create and present a plan to the user for confirmation. DO NOT execute tools immediately.
+
+### Workflow:
+
+1. **Understand the question** - Analyze what the user is asking
+2. **Create a plan** - Design step-by-step approach if tools are needed
+3. **Present the plan** - Show the plan and wait for user confirmation
+4. **Execute (only if confirmed)** - After user confirms, execute the tools
+
+### Response Formats:
+
+#### For simple questions (no tools needed):
+```
+Answer: [Your direct answer]
+```
+
+#### For questions needing tools (FIRST response):
+```
+**Plan:** [Brief description of what you'll do]
+
+**Steps:**
+1. [First step with tool call]
+   - Tool: ::tool_name{params}
+   - Purpose: [Why this step is needed]
+
+2. [Second step if needed]
+   - Tool: ::tool_name{params}
+   - Purpose: [What information this provides]
+
+**Expected Result:** [What the user will get after execution]
+
+---
+
+**Please confirm:** Should I proceed with this plan? (yes/no)
+```
+
+#### After user confirms:
+```
+**Step 1:** [Executing tool_name]
+[Tool results]
+
+**Step 2:** [Executing tool_name]
+[Tool results]
+
+**Answer:** [Final answer based on results]
+```
+
+### Example:
+
+User: "How many tables are in project gcc_002?"
+
+**Plan:** Query the DataWorks system to get the list of tables in the gcc_002 project and count them.
+
+**Steps:**
+1. List all tables in the gcc_002 project
+   - Tool: ::dataworks.ListTables{"projectName":"gcc_002"}
+   - Purpose: Get the complete table list
+
+**Expected Result:** You'll know the exact number of tables in the project and their names.
+
+---
+
+**Please confirm:** Should I proceed with this plan? (yes/no)
+
+[User says yes]
+
+**Step 1:** Executing ListTables...
+[Retrieved 23 tables: users, orders, products, ...]
+
+**Answer:** The gcc_002 project contains **23 tables**.
+
+### Important Rules:
+
+1. **ALWAYS plan first** - Never execute tools without presenting the plan first
+2. **Be specific** - Show exact tool calls with parameters
+3. **Explain why** - Tell the user what each step accomplishes
+4. **Wait for confirmation** - Only proceed after user approval
+5. **Direct answers** - For simple questions you know, answer directly without tools
+
+## Available Tools
 
 """
 
         # Add Skills information
         if self.skills_bridge:
-            prompt += "## Available Skills\n\n"
+            prompt += "### Skills\n\n"
             try:
                 skills = self.skills_bridge.executor.registry.list_skills()
                 for skill in skills:
@@ -89,14 +174,21 @@ You have access to the following tools and capabilities:
                     skill_desc = skill.get('description', 'No description')
                     prompt += f"- **{skill_id}** ({skill_name}): {skill_desc}\n"
 
-                prompt += "\nYou can execute these skills when users ask for related functionality.\n\n"
+                prompt += "\n"
             except Exception as e:
                 logger.warning(f"Failed to get skills list: {e}")
-                prompt += "- Skills system available (failed to list specific skills)\n\n"
+                prompt += "- Skills system available\n\n"
+
+        # Add MaxCompute information
+        prompt += "### MaxCompute/ODPS Tools\n\n"
+        prompt += "- **maxcompute.list_tables**{}: List all tables in the MaxCompute project\n"
+        prompt += "- **maxcompute.describe_table**{table_name}: Get schema information for a specific table\n"
+        prompt += "- **maxcompute.get_latest_partition**{table_name}: Get the latest partition name for a table\n"
+        prompt += "- **maxcompute.read_query**{query}: Execute a SELECT SQL query (only SELECT queries allowed)\n\n"
 
         # Add MCP information
         if self.mcp_bridge:
-            prompt += "## Available MCP Tools\n\n"
+            prompt += "### MCP Tools\n\n"
             try:
                 # Get connected MCP servers (synchronous access to manager.clients)
                 if hasattr(self.mcp_bridge, 'manager') and self.mcp_bridge.manager:
@@ -105,42 +197,34 @@ You have access to the following tools and capabilities:
                     servers = []
 
                 if servers:
-                    prompt += f"Connected MCP Servers: {', '.join(servers)}\n\n"
-                    prompt += "You can call MCP tools using the format: server_name.tool_name\n\n"
+                    prompt += f"Connected Servers: {', '.join(servers)}\n\n"
+                    prompt += "Use format: `::server.tool_name{params}` or `::tool_name{params}` (defaults to dataworks server)\n\n"
                 else:
                     prompt += "- MCP system available (no servers connected)\n\n"
             except Exception as e:
                 logger.warning(f"Failed to get MCP info: {e}")
                 prompt += "- MCP system available\n\n"
 
-        # Add usage instructions
+        # Add general instructions
         prompt += """
-## How to Use Tools
+## Response Style
 
-When a user request requires using a skill or MCP tool, use this format:
+- Be concise and clear
+- Always create plans before tool execution
+- Show tool calls exactly as they will be executed
+- Explain the purpose of each step
+- Wait for user confirmation before executing
 
-For simple function calls:
-::tool_name{param1=value1, param2=value2}
+## Tool Call Examples
 
-For complex calls with JSON:
-::tool_name{"param1": "value1", "param2": "value2"}
-
-Examples:
-- ::calculate{expression=2 + 2 * 3}
-- ::system_info{info_type=all}
-- ::echo{message=Hello World}
+- ::calculate{expression=2+2}
 - ::dataworks.ListProjects{}
+- ::dataworks.ListTables{"projectName":"gcc_002"}
+- ::maxcompute.list_tables{}
+- ::maxcompute.read_query{"query":"SELECT * FROM users LIMIT 10"}
+- ::system_info{info_type=all}
 
-**IMPORTANT**: Always use the tool call format when you need to execute a skill or MCP tool. Do NOT just describe what you would do - actually call the tool!
-
-## General Instructions
-
-- Be concise, friendly, and helpful
-- Answer questions directly when possible
-- **Actually execute tools using the format above** when they can help fulfill user requests
-- Explain what tools you're using and why
-- If a tool call fails, explain the error to the user
-- After tool execution, provide a clear summary of the results
+Remember: **Plan first, execute only after confirmation!**
 """
 
         return prompt
@@ -235,6 +319,16 @@ Examples:
 
         # Add user message to session
         session.add_message('user', content)
+
+        # Send thinking status - starting to analyze
+        await self.send_message(client_id, {
+            'type': 'thinking',
+            'content': '🤔 正在分析您的问题...',
+            'timestamp': datetime.utcnow().isoformat()
+        })
+
+        # Small delay to show the thinking status
+        await asyncio.sleep(0.5)
 
         # Generate response
         response = await self._generate_response(client_id, content)
@@ -356,7 +450,7 @@ Examples:
 
     async def _generate_response(self, client_id: str, message: str) -> str:
         """
-        Generate response to user message using LLM
+        Generate response to user message with plan-first mode
 
         Args:
             client_id: Client identifier
@@ -368,6 +462,16 @@ Examples:
         # Check for special commands first
         if message.startswith('/'):
             return await self._handle_command(client_id, message)
+
+        # Check for plan confirmation (yes/no)
+        if message.lower().strip() in ['yes', 'y', 'confirm', 'ok', 'continue', '执行', '确认']:
+            return await self._execute_confirmed_plan(client_id)
+
+        elif message.lower().strip() in ['no', 'n', 'cancel', 'stop', '取消', '否']:
+            # Cancel pending plan
+            if client_id in self.pending_plans:
+                del self.pending_plans[client_id]
+            return "❌ 计划已取消。如有需要，请重新描述您的问题。"
 
         # Use LLM if available
         if self.llm_service and self.llm_service.is_available():
@@ -385,35 +489,37 @@ Examples:
                 # Add current user message
                 messages.append(Message(role='user', content=message))
 
+                # Send thinking status - generating response
+                await self.send_message(client_id, {
+                    'type': 'thinking',
+                    'content': '💭 正在生成回复...',
+                    'timestamp': datetime.utcnow().isoformat()
+                })
+
                 # Generate response
                 response = await self.llm_service.chat(messages)
                 response_text = response.content
 
-                # Check for tool calls in response
+                # Check if response contains tool calls
                 tool_calls = ToolCallParser.parse(response_text)
 
-                if tool_calls:
-                    logger.info(f"Detected {len(tool_calls)} tool call(s) in LLM response")
+                if tool_calls and self.require_confirmation:
+                    # Send thinking status - planning tool calls
+                    await self.send_message(client_id, {
+                        'type': 'thinking',
+                        'content': f'📋 正在制定计划（需要调用 {len(tool_calls)} 个工具）...',
+                        'timestamp': datetime.utcnow().isoformat()
+                    })
+                    await asyncio.sleep(0.3)
+                    # Extract plan and ask for confirmation
+                    return await self._create_and_present_plan(
+                        client_id,
+                        response_text,
+                        tool_calls,
+                        messages
+                    )
 
-                    # Execute tools and collect results
-                    tool_executor = ToolExecutor(self.skills_bridge, self.mcp_bridge)
-                    tool_results = []
-
-                    for call in tool_calls:
-                        try:
-                            result = await tool_executor.execute(call)
-                            tool_results.append(f"Tool '{call.tool_name}' result: {result}")
-                        except Exception as e:
-                            tool_results.append(f"Tool '{call.tool_name}' error: {str(e)}")
-
-                    # Add tool results to conversation and get final response
-                    messages.append(Message(role='assistant', content=response_text))
-                    messages.append(Message(role='user', content=f"Tool results:\n" + "\n".join(tool_results)))
-
-                    # Get final response from LLM
-                    final_response = await self.llm_service.chat(messages)
-                    return final_response.content
-
+                # No tool calls or confirmation not required - return direct response
                 return response_text
 
             except Exception as e:
@@ -449,6 +555,177 @@ Examples:
         # Fallback to simple response
         return f"Received: {message}\n\n(Note: LLM service not configured. Use /help for available commands.)"
 
+    def _format_observation(self, result: Any) -> str:
+        """
+        Format tool execution result as observation
+
+        Args:
+            result: Tool execution result
+
+        Returns:
+            Formatted observation string
+        """
+        import json
+
+        if isinstance(result, dict):
+            # Handle MCP tool result format
+            if 'content' in result and isinstance(result['content'], list):
+                # Extract text content from MCP result
+                texts = []
+                for item in result['content']:
+                    if isinstance(item, dict) and 'text' in item:
+                        texts.append(item['text'])
+                    elif isinstance(item, str):
+                        texts.append(item)
+                content = '\n'.join(texts)
+
+                # Try to parse as JSON for better formatting
+                try:
+                    parsed = json.loads(content)
+                    return json.dumps(parsed, indent=2, ensure_ascii=False)
+                except:
+                    return content
+            else:
+                return json.dumps(result, indent=2, ensure_ascii=False)
+
+        elif hasattr(result, 'success'):
+            # Handle skill result format
+            if result.success:
+                return json.dumps(result.data, indent=2, ensure_ascii=False)
+            else:
+                return f"Error: {result.error}"
+
+        else:
+            return str(result)
+
+    async def _create_and_present_plan(
+        self,
+        client_id: str,
+        response_text: str,
+        tool_calls: list,
+        messages: list
+    ) -> str:
+        """
+        Create a plan from tool calls and present to user for confirmation
+
+        Args:
+            client_id: Client identifier
+            response_text: LLM response containing the plan
+            tool_calls: List of tool calls to execute
+            messages: Conversation messages
+
+        Returns:
+            Plan presentation message
+        """
+        # Save the plan for later execution
+        self.pending_plans[client_id] = {
+            'tool_calls': tool_calls,
+            'messages': messages,
+            'response_text': response_text,
+            'timestamp': datetime.utcnow().isoformat()
+        }
+
+        # Extract tool calls for display
+        steps = []
+        for i, call in enumerate(tool_calls, 1):
+            params_str = ', '.join(f'{k}={v}' for k, v in call.parameters.items())
+            steps.append(f"{i}. **{call.tool_name}**")
+            if params_str:
+                steps.append(f"   参数: {params_str}")
+            steps.append("")
+
+        # Build confirmation message
+        confirmation_msg = f"""📋 **执行计划**
+
+{response_text}
+
+**详细步骤：**
+
+{chr(10).join(steps)}
+
+---
+
+⚠️ **需要您的确认：**
+
+回复 `yes` 或 `确认` 开始执行此计划
+回复 `no` 或 `取消` 取消执行
+
+💡 提示：你也可以修改问题后重新发送
+"""
+
+        return confirmation_msg
+
+    async def _execute_confirmed_plan(self, client_id: str) -> str:
+        """
+        Execute a previously confirmed plan
+
+        Args:
+            client_id: Client identifier
+
+        Returns:
+            Execution result message
+        """
+        # Check if there's a pending plan
+        if client_id not in self.pending_plans:
+            return "❌ 没有待执行的计划。请先提出您的问题。"
+
+        plan = self.pending_plans[client_id]
+        tool_calls = plan['tool_calls']
+        messages = plan['messages']
+
+        # Remove from pending
+        del self.pending_plans[client_id]
+
+        # Execute tool calls
+        tool_executor = ToolExecutor(self.skills_bridge, self.mcp_bridge)
+        execution_results = []
+
+        for i, call in enumerate(tool_calls, 1):
+            try:
+                logger.info(f"Executing tool {i}/{len(tool_calls)}: {call.tool_name}")
+
+                # Send thinking status - executing tool
+                await self.send_message(client_id, {
+                    'type': 'thinking',
+                    'content': f'🔧 正在执行工具 {i}/{len(tool_calls)}: {call.tool_name}',
+                    'timestamp': datetime.utcnow().isoformat()
+                })
+
+                result = await tool_executor.execute(call)
+                observation = self._format_observation(result)
+
+                execution_results.append(f"**步骤 {i}:** 执行 `{call.tool_name}`\n")
+                execution_results.append(f"```\n{observation[:500]}\n```\n")
+
+                # Add to messages for potential further processing
+                messages.append(Message(role='assistant', content=call.tool_name))
+                messages.append(Message(role='user', content=f"Result: {observation}"))
+
+            except Exception as e:
+                error_msg = f"❌ 工具执行失败: {str(e)}"
+                logger.error(error_msg)
+                execution_results.append(f"**步骤 {i}:** ❌ 失败\n{error_msg}\n")
+                # Continue with remaining tools
+
+        # If all tools executed successfully, try to get final answer from LLM
+        if all("失败" not in r for r in execution_results):
+            try:
+                # Ask LLM to synthesize the results
+                messages.append(Message(
+                    role='user',
+                    content="Based on the tool results above, please provide a clear and concise final answer to the user's question."
+                ))
+
+                final_response = await self.llm_service.chat(messages)
+
+                execution_results.append("\n---\n\n")
+                execution_results.append(f"**最终答案：**\n\n{final_response.content}")
+
+            except Exception as e:
+                logger.error(f"Failed to get final answer: {e}")
+
+        return "\n".join(execution_results)
+
     async def _handle_command(self, client_id: str, message: str) -> str:
         """
         Handle special commands
@@ -472,6 +749,11 @@ Examples:
 - `/clear` - Clear conversation history
 - `/history` - Show conversation statistics
 
+**Plan Confirmation Mode:**
+- `/confirm_mode` - Toggle plan confirmation mode (current: {})
+- `/auto_mode` - Enable automatic execution (no confirmation)
+- `/plan_mode` - Enable plan confirmation mode (default)
+
 **Skills Commands:**
 - `/skills` - List available skills
 - `/skill <skill_id> [params]` - Execute a skill (JSON format for params)
@@ -483,7 +765,7 @@ Examples:
 
 **Example:**
 `/skill calculate {"expression": "2 + 2 * 3"}`
-"""
+""".format("✅ 已启用" if self.require_confirmation else "❌ 已禁用")
 
         elif command == '/clear':
             session = self.sessions.get(client_id)
@@ -562,6 +844,14 @@ Examples:
                 except Exception as e:
                     return f"❌ Error executing skill: {e}"
             return "❌ Skills system not available"
+
+        elif command in ['/confirm_mode', '/plan_mode']:
+            self.require_confirmation = True
+            return "✅ **计划确认模式已启用**\n\n工具调用前会先向您展示执行计划，等待您的确认。"
+
+        elif command == '/auto_mode':
+            self.require_confirmation = False
+            return "⚡ **自动执行模式已启用**\n\n工具将直接执行，不会请求确认。"
 
         elif command == '/mcp_list':
             if self.mcp_bridge:

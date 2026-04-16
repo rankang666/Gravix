@@ -107,12 +107,25 @@ async def start_server():
 
     # Initialize Chat Server
     logger.info("\nInitializing Chat Server...")
+
+    # Load custom system prompt if available
+    system_prompt = None
+    prompt_file = Path(__file__).parent / 'system_prompt.txt'
+    if prompt_file.exists():
+        logger.info(f"Loading custom system prompt from {prompt_file}")
+        with open(prompt_file, 'r', encoding='utf-8') as f:
+            system_prompt = f.read()
+        logger.info(f"✅ Custom system prompt loaded ({len(system_prompt)} chars)")
+    else:
+        logger.info("Using default system prompt (Plan-First mode)")
+
     chat_server = ChatServer(
         host="0.0.0.0",
         port=8765,
         skills_bridge=skills_bridge,
         mcp_bridge=mcp_bridge,
-        llm_service=llm_service
+        llm_service=llm_service,
+        system_prompt=system_prompt
     )
 
     logger.info("\n" + "=" * 60)
