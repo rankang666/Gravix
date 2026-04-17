@@ -32,7 +32,7 @@ def load_env():
 
 load_env()
 
-from app.chat.server import ChatServer
+from app.chat.http_server import ChatHTTPServer
 from app.skills.executor import SkillExecutor
 from app.skills.registry import SkillRegistry
 from app.chat.integration.skills_bridge import SkillsBridge
@@ -48,6 +48,15 @@ async def start_server():
     logger.info("=" * 60)
     logger.info("Starting Gravix Services")
     logger.info("=" * 60)
+
+    # Check if hot reload should be enabled
+    enable_hot_reload = os.getenv('ENABLE_HOT_RELOAD', 'false').lower() == 'true'
+
+    if enable_hot_reload:
+        logger.info("♻️  Hot reload ENABLED - Server will auto-reload on code changes")
+    else:
+        logger.info("ℹ️  Hot reload disabled - Set ENABLE_HOT_RELOAD=true to enable")
+        logger.info("   Example: ENABLE_HOT_RELOAD=true python3 run_all.py")
 
     # Initialize Skills
     logger.info("Initializing Skills system...")
@@ -105,7 +114,7 @@ async def start_server():
         logger.info("\n⚠️  LLM service not configured (set LLM_PROVIDER env var)")
         logger.info("Available providers: claude, openai")
 
-    # Initialize Chat Server
+    # Initialize Chat Server (HTTP + WebSocket)
     logger.info("\nInitializing Chat Server...")
 
     # Load custom system prompt if available
@@ -119,31 +128,32 @@ async def start_server():
     else:
         logger.info("Using default system prompt (Plan-First mode)")
 
-    chat_server = ChatServer(
+    chat_server = ChatHTTPServer(
         host="0.0.0.0",
         port=8765,
         skills_bridge=skills_bridge,
         mcp_bridge=mcp_bridge,
         llm_service=llm_service,
-        system_prompt=system_prompt
+        system_prompt=system_prompt,
+        enable_hot_reload=enable_hot_reload
     )
 
     logger.info("\n" + "=" * 60)
     logger.info("🚀 Gravix Services Ready!")
     logger.info("=" * 60)
-    logger.info(f"WebSocket Chat: ws://localhost:8765")
-    logger.info(f"Web UI: file://{Path(__file__).parent / 'web' / 'static' / 'index.html'}")
+    logger.info(f"🌐 Web UI: http://localhost:8765")
+    logger.info(f"🔌 WebSocket: ws://localhost:8765")
 
     if llm_service:
-        logger.info(f"LLM Provider: {llm_provider}")
-        logger.info(f"LLM Model: {llm_service.provider.model if llm_service.provider else 'N/A'}")
+        logger.info(f"🤖 LLM Provider: {llm_provider}")
+        logger.info(f"📦 LLM Model: {llm_service.provider.model if llm_service.provider else 'N/A'}")
     else:
-        logger.info("LLM: Not configured (command-only mode)")
+        logger.info("⚠️  LLM: Not configured (command-only mode)")
 
     if mcp_bridge:
-        logger.info(f"MCP Servers: {', '.join(connected_servers)}")
+        logger.info(f"⚡ MCP Servers: {', '.join(connected_servers)}")
 
-    logger.info("\nPress Ctrl+C to stop all services")
+    logger.info("\n💡 Open your browser and visit: http://localhost:8765")
     logger.info("=" * 60 + "\n")
 
     try:

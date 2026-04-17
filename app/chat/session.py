@@ -12,6 +12,7 @@
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 from dataclasses import dataclass, field
+import json
 
 
 @dataclass
@@ -47,14 +48,16 @@ class ChatSession:
     Manages conversation history, context, and metadata for a chat session.
     """
 
-    def __init__(self, session_id: str):
+    def __init__(self, session_id: str, title: str = None):
         """
         Initialize chat session
 
         Args:
             session_id: Unique session identifier
+            title: Optional session title
         """
         self.session_id = session_id
+        self.title = title or f"会话 {datetime.now().strftime('%Y-%m-%d %H:%M')}"
         self.messages: List[ChatMessage] = []
         self.metadata: Dict[str, Any] = {}
         self.created_at = datetime.utcnow()
@@ -164,9 +167,77 @@ class ChatSession:
         ).total_seconds()
         return inactive_time > timeout_seconds
 
+    def get_preview(self, max_length: int = 50) -> str:
+        """
+        Get session preview text (last user message)
+
+        Args:
+            max_length: Maximum length of preview text
+
+        Returns:
+            Preview text string
+        """
+        user_messages = [m for m in self.messages if m.role == 'user']
+        if user_messages:
+            content = user_messages[-1].content
+            if len(content) > max_length:
+                return content[:max_length] + '...'
+            return content
+        return "新会话"
+
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert session to dictionary for serialization
+
+        Returns:
+            Dictionary representation of session
+        """
+        return {
+            'session_id': self.session_id,
+            'title': self.title,
+            'messages': [m.to_dict() for m in self.messages],
+            'metadata': self.metadata,
+            'created_at': self.created_at.isoformat(),
+            'last_activity': self.last_activity.isoformat()
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'ChatSession':
+        """
+        Create session from dictionary
+
+        Args:
+            data: Dictionary containing session data
+
+        Returns:
+            ChatSession instance
+        """
+        session = cls(data['session_id'], data['title'])
+
+        # Load messages
+        session.messages = [
+            ChatMessage(
+                role=m['role'],
+                content=m['content'],
+                timestamp=datetime.fromisoformat(m['timestamp']),
+                metadata=m.get('metadata', {})
+            )
+            for m in data.get('messages', [])
+        ]
+
+        # Load metadata
+        session.metadata = data.get('metadata', {})
+
+        # Load timestamps
+        session.created_at = datetime.fromisoformat(data['created_at'])
+        session.last_activity = datetime.fromisoformat(data['last_activity'])
+
+        return session
+
     def __repr__(self) -> str:
         return (
             f"<ChatSession(id='{self.session_id}', "
+            f"title='{self.title}', "
             f"messages={len(self.messages)}, "
             f"duration={self.get_duration():.0f}s)>"
         )

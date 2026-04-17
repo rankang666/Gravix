@@ -23,6 +23,9 @@ python-multipart==0.0.6
 # System information
 psutil==5.9.6
 
+# Development tools
+watchdog==3.0.0  # File system monitoring for hot reload
+
 # LLM Providers (optional - install as needed)
 anthropic>=0.18.0  # Claude API
 openai>=1.0.0      # OpenAI API
