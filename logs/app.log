@@ -6316,3 +6316,630 @@ Initializing Chat Server...
 2026-04-17 17:06:21.726 | INFO     | app.chat.session_manager:delete_session:129 - Deleted session: a74d2027-1143-43f4-8779-dbafb5b03374 - '会话 2026/4/17 14:43:26'
 2026-04-17 17:06:23.006 | INFO     | app.chat.session_manager:switch_session:102 - Switched to session: 0d8ca7dd-4610-4617-86d4-eaacf9480f9d
 2026-04-17 17:06:23.906 | INFO     | app.chat.session_manager:switch_session:102 - Switched to session: 1d6b0060-cd78-47c6-a023-5cec21725fc6
+2026-04-17 17:15:20.120 | INFO     | app.database.factory:_create_sqlite_adapter:56 - Creating SQLite adapter with path: data/test_gravix.db
+2026-04-17 17:15:20.122 | INFO     | app.database.sqlite_adapter:connect:52 - ✅ SQLite database connected: data/test_gravix.db
+2026-04-17 17:15:20.128 | INFO     | app.database.sqlite_adapter:initialize_schema:70 - ✅ Database schema initialized
+2026-04-17 17:15:20.128 | INFO     | app.database.sqlite_adapter:connect:52 - ✅ SQLite database connected: data/test_gravix.db
+2026-04-17 17:15:20.129 | INFO     | app.database.sqlite_adapter:initialize_schema:70 - ✅ Database schema initialized
+2026-04-17 17:15:20.129 | INFO     | app.chat.database_session_manager:_initialize_default_session:51 - No existing sessions found, creating default session
+2026-04-17 17:15:20.131 | INFO     | app.chat.database_session_manager:create_session:80 - Created new session: cff4221f-1c1a-485e-9121-18479e7b8490 - '默认会话'
+2026-04-17 17:15:20.132 | INFO     | app.chat.database_session_manager:__init__:45 - ✅ Database Session Manager initialized
+2026-04-17 17:15:20.133 | INFO     | app.chat.database_session_manager:create_session:80 - Created new session: 90f00ab6-3134-49ab-95dc-88e2b48e7d3b - 'Test Session'
+2026-04-17 17:15:20.142 | INFO     | app.database.sqlite_adapter:delete_session:212 - Deleted session: 90f00ab6-3134-49ab-95dc-88e2b48e7d3b
+2026-04-17 17:15:20.142 | INFO     | app.chat.database_session_manager:delete_session:177 - Deleted session: 90f00ab6-3134-49ab-95dc-88e2b48e7d3b
+2026-04-17 17:15:20.143 | INFO     | app.database.sqlite_adapter:disconnect:62 - ✅ SQLite database disconnected
+2026-04-17 17:16:49.827 | INFO     | app.chat.http_server:start:780 - Server shutdown requested
+2026-04-17 17:16:59.509 | INFO     | __main__:start_server:48 - ============================================================
+2026-04-17 17:16:59.509 | INFO     | __main__:start_server:49 - Starting Gravix Services
+2026-04-17 17:16:59.509 | INFO     | __main__:start_server:50 - ============================================================
+2026-04-17 17:16:59.509 | INFO     | __main__:start_server:58 - ℹ️  Hot reload disabled - Set ENABLE_HOT_RELOAD=true to enable
+2026-04-17 17:16:59.510 | INFO     | __main__:start_server:59 -    Example: ENABLE_HOT_RELOAD=true python3 run_all.py
+2026-04-17 17:16:59.510 | INFO     | __main__:start_server:62 - Initializing Skills system...
+2026-04-17 17:16:59.510 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'analysis' has no scripts/ directory
+2026-04-17 17:16:59.511 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: calculate (Calculator) from calculate.py
+2026-04-17 17:16:59.511 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'custom_example' has no scripts/ directory
+2026-04-17 17:16:59.512 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: echo (Echo Skill) from echo.py
+2026-04-17 17:16:59.513 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: funboost_task (Funboost Task Executor) from funboost_task.py
+2026-04-17 17:16:59.525 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: system_info (System Information) from system_info.py
+2026-04-17 17:16:59.526 | INFO     | app.skills.registry:_load_all_skills:84 - Total skills registered: 4
+2026-04-17 17:16:59.526 | INFO     | __main__:start_server:68 - Loaded 4 skills:
+2026-04-17 17:16:59.526 | INFO     | __main__:start_server:70 -   - calculate: Calculator
+2026-04-17 17:16:59.526 | INFO     | __main__:start_server:70 -   - echo: Echo Skill
+2026-04-17 17:16:59.526 | INFO     | __main__:start_server:70 -   - funboost_task: Funboost Task Executor
+2026-04-17 17:16:59.527 | INFO     | __main__:start_server:70 -   - system_info: System Information
+2026-04-17 17:16:59.527 | INFO     | __main__:start_server:73 - 
+Initializing MCP system...
+2026-04-17 17:16:59.527 | INFO     | app.mcp.manager:initialize:46 - ============================================================
+2026-04-17 17:16:59.527 | INFO     | app.mcp.manager:initialize:47 - Initializing MCP Servers
+2026-04-17 17:16:59.527 | INFO     | app.mcp.manager:initialize:48 - ============================================================
+2026-04-17 17:16:59.528 | INFO     | app.mcp.manager:initialize:57 - Configuring MCP server: dataworks
+2026-04-17 17:16:59.528 | INFO     | app.mcp.adapters.stdio:connect:71 - Setting REGION: cn-shenzhen
+2026-04-17 17:16:59.528 | INFO     | app.mcp.adapters.stdio:connect:84 - Starting MCP server subprocess: npx -y alibabacloud-dataworks-mcp-server
+2026-04-17 17:16:59.539 | INFO     | app.mcp.adapters.stdio:connect:99 - ✅ MCP server subprocess started (PID: 37002)
+2026-04-17 17:17:07.096 | INFO     | app.mcp.client:connect:92 - Connected to MCP server: {'name': 'dataworks-agent', 'version': '0.0.2'}
+2026-04-17 17:17:07.096 | INFO     | app.mcp.manager:_init_server:108 - ✅ dataworks: Connected successfully
+2026-04-17 17:17:07.097 | INFO     | app.mcp.manager:_init_server:110 -    Server: dataworks-agent v0.0.2
+2026-04-17 17:17:07.097 | INFO     | app.mcp.manager:initialize:66 - 
+============================================================
+2026-04-17 17:17:07.097 | INFO     | app.mcp.manager:initialize:67 - MCP Servers Initialization Complete
+2026-04-17 17:17:07.098 | INFO     | app.mcp.manager:initialize:68 - ✅ Connected: 1/1
+2026-04-17 17:17:07.098 | INFO     | app.mcp.manager:initialize:71 - ============================================================
+
+2026-04-17 17:17:07.098 | INFO     | __main__:start_server:79 - ✅ Connected to 1 MCP server(s):
+2026-04-17 17:17:07.098 | INFO     | __main__:start_server:81 -   - dataworks
+2026-04-17 17:17:07.191 | INFO     | app.mcp.manager:list_all_tools:175 - dataworks: 186 tools available
+2026-04-17 17:17:07.191 | INFO     | __main__:start_server:87 - 
+📦 dataworks - 186 tools:
+2026-04-17 17:17:07.192 | INFO     | __main__:start_server:89 -     - ExecPipelineRunStage: 执行发布流程的指定阶段
+2026-04-17 17:17:07.192 | INFO     | __main__:start_server:89 -     - AbolishPipelineRun: 终止发布流程
+2026-04-17 17:17:07.192 | INFO     | __main__:start_server:89 -     - CreatePipelineRun: 创建发布流程
+2026-04-17 17:17:07.192 | INFO     | __main__:start_server:89 -     - ListWorkflows: 获取工作流列表
+2026-04-17 17:17:07.192 | INFO     | __main__:start_server:89 -     - UpdateMetaCollection: 更新数据地图集合对象
+2026-04-17 17:17:07.192 | INFO     | __main__:start_server:91 -     ... and 181 more tools
+2026-04-17 17:17:07.193 | INFO     | __main__:start_server:106 - 
+Initializing LLM service (provider: openai)...
+2026-04-17 17:17:08.274 | INFO     | app.llm.openai:_init_client:72 - OpenAI provider initialized with model: Qwen3-32B, timeout: 300.0s
+2026-04-17 17:17:08.274 | INFO     | app.llm.service:_init_provider:146 - LLM service initialized with openai (Qwen3-32B@http://192.168.2.85:8003/v1)
+2026-04-17 17:17:08.274 | INFO     | __main__:start_server:108 - ✅ LLM service ready
+2026-04-17 17:17:08.274 | INFO     | __main__:start_server:118 - 
+Initializing Chat Server...
+2026-04-17 17:17:08.275 | INFO     | __main__:start_server:124 - Loading custom system prompt from /Users/jerry/PycharmProjects/Gravix/system_prompt.txt
+2026-04-17 17:17:08.277 | INFO     | __main__:start_server:127 - ✅ Custom system prompt loaded (745 chars)
+2026-04-17 17:17:08.277 | INFO     | app.database.factory:_create_sqlite_adapter:56 - Creating SQLite adapter with path: data/gravix.db
+2026-04-17 17:17:08.278 | INFO     | app.chat.http_server:__init__:80 - ✅ Using database storage
+2026-04-17 17:17:08.278 | ERROR    | app.database.sqlite_adapter:list_sessions:158 - Failed to list sessions: 'NoneType' object has no attribute 'cursor'
+2026-04-17 17:17:08.278 | INFO     | app.database.migration:auto_migrate_if_needed:167 - 🔄 Starting automatic migration from JSON to database...
+2026-04-17 17:17:08.279 | INFO     | app.database.migration:load_json_data:43 - Loaded JSON data from data/sessions.json
+2026-04-17 17:17:08.279 | INFO     | app.database.migration:migrate_to_database:68 - Migrating 3 sessions to database...
+2026-04-17 17:17:08.279 | ERROR    | app.database.migration:migrate_to_database:115 - Migration failed: 'NoneType' object has no attribute 'execute'
+2026-04-17 17:17:49.870 | INFO     | app.database.factory:_create_sqlite_adapter:56 - Creating SQLite adapter with path: data/test_migration.db
+2026-04-17 17:17:49.874 | INFO     | app.database.sqlite_adapter:connect:52 - ✅ SQLite database connected: data/test_migration.db
+2026-04-17 17:17:49.880 | INFO     | app.database.sqlite_adapter:initialize_schema:70 - ✅ Database schema initialized
+2026-04-17 17:17:49.880 | INFO     | app.database.migration:auto_migrate_if_needed:160 - ✅ Database connected for migration
+2026-04-17 17:17:49.881 | INFO     | app.database.migration:auto_migrate_if_needed:181 - 🔄 Starting automatic migration from JSON to database...
+2026-04-17 17:17:49.881 | INFO     | app.database.migration:load_json_data:43 - Loaded JSON data from data/sessions.json
+2026-04-17 17:17:49.881 | INFO     | app.database.migration:migrate_to_database:68 - Migrating 3 sessions to database...
+2026-04-17 17:17:49.897 | INFO     | app.database.migration:migrate_to_database:107 - ✅ Successfully migrated 3/3 sessions
+2026-04-17 17:17:49.898 | INFO     | app.database.migration:_backup_json_file:125 - ✅ JSON file backed up to: data/sessions.json.backup
+2026-04-17 17:17:49.898 | INFO     | app.database.migration:auto_migrate_if_needed:186 - ✅ Migration completed successfully
+2026-04-17 17:18:05.754 | INFO     | __main__:start_server:48 - ============================================================
+2026-04-17 17:18:05.754 | INFO     | __main__:start_server:49 - Starting Gravix Services
+2026-04-17 17:18:05.754 | INFO     | __main__:start_server:50 - ============================================================
+2026-04-17 17:18:05.755 | INFO     | __main__:start_server:58 - ℹ️  Hot reload disabled - Set ENABLE_HOT_RELOAD=true to enable
+2026-04-17 17:18:05.755 | INFO     | __main__:start_server:59 -    Example: ENABLE_HOT_RELOAD=true python3 run_all.py
+2026-04-17 17:18:05.755 | INFO     | __main__:start_server:62 - Initializing Skills system...
+2026-04-17 17:18:05.756 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'analysis' has no scripts/ directory
+2026-04-17 17:18:05.757 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: calculate (Calculator) from calculate.py
+2026-04-17 17:18:05.758 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'custom_example' has no scripts/ directory
+2026-04-17 17:18:05.759 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: echo (Echo Skill) from echo.py
+2026-04-17 17:18:05.760 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: funboost_task (Funboost Task Executor) from funboost_task.py
+2026-04-17 17:18:05.774 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: system_info (System Information) from system_info.py
+2026-04-17 17:18:05.775 | INFO     | app.skills.registry:_load_all_skills:84 - Total skills registered: 4
+2026-04-17 17:18:05.775 | INFO     | __main__:start_server:68 - Loaded 4 skills:
+2026-04-17 17:18:05.775 | INFO     | __main__:start_server:70 -   - calculate: Calculator
+2026-04-17 17:18:05.775 | INFO     | __main__:start_server:70 -   - echo: Echo Skill
+2026-04-17 17:18:05.775 | INFO     | __main__:start_server:70 -   - funboost_task: Funboost Task Executor
+2026-04-17 17:18:05.775 | INFO     | __main__:start_server:70 -   - system_info: System Information
+2026-04-17 17:18:05.775 | INFO     | __main__:start_server:73 - 
+Initializing MCP system...
+2026-04-17 17:18:05.775 | INFO     | app.mcp.manager:initialize:46 - ============================================================
+2026-04-17 17:18:05.775 | INFO     | app.mcp.manager:initialize:47 - Initializing MCP Servers
+2026-04-17 17:18:05.776 | INFO     | app.mcp.manager:initialize:48 - ============================================================
+2026-04-17 17:18:05.776 | INFO     | app.mcp.manager:initialize:57 - Configuring MCP server: dataworks
+2026-04-17 17:18:05.776 | INFO     | app.mcp.adapters.stdio:connect:71 - Setting REGION: cn-shenzhen
+2026-04-17 17:18:05.776 | INFO     | app.mcp.adapters.stdio:connect:84 - Starting MCP server subprocess: npx -y alibabacloud-dataworks-mcp-server
+2026-04-17 17:18:05.783 | INFO     | app.mcp.adapters.stdio:connect:99 - ✅ MCP server subprocess started (PID: 37124)
+2026-04-17 17:18:12.940 | INFO     | app.mcp.client:connect:92 - Connected to MCP server: {'name': 'dataworks-agent', 'version': '0.0.2'}
+2026-04-17 17:18:12.940 | INFO     | app.mcp.manager:_init_server:108 - ✅ dataworks: Connected successfully
+2026-04-17 17:18:12.940 | INFO     | app.mcp.manager:_init_server:110 -    Server: dataworks-agent v0.0.2
+2026-04-17 17:18:12.940 | INFO     | app.mcp.manager:initialize:66 - 
+============================================================
+2026-04-17 17:18:12.940 | INFO     | app.mcp.manager:initialize:67 - MCP Servers Initialization Complete
+2026-04-17 17:18:12.941 | INFO     | app.mcp.manager:initialize:68 - ✅ Connected: 1/1
+2026-04-17 17:18:12.941 | INFO     | app.mcp.manager:initialize:71 - ============================================================
+
+2026-04-17 17:18:12.941 | INFO     | __main__:start_server:79 - ✅ Connected to 1 MCP server(s):
+2026-04-17 17:18:12.941 | INFO     | __main__:start_server:81 -   - dataworks
+2026-04-17 17:18:13.038 | INFO     | app.mcp.manager:list_all_tools:175 - dataworks: 186 tools available
+2026-04-17 17:18:13.038 | INFO     | __main__:start_server:87 - 
+📦 dataworks - 186 tools:
+2026-04-17 17:18:13.038 | INFO     | __main__:start_server:89 -     - ListWorkflows: 获取工作流列表
+2026-04-17 17:18:13.038 | INFO     | __main__:start_server:89 -     - UpdateMetaCollection: 更新数据地图集合对象
+2026-04-17 17:18:13.038 | INFO     | __main__:start_server:89 -     - CreateResource: 创建数据开发文件资源
+2026-04-17 17:18:13.038 | INFO     | __main__:start_server:89 -     - ResumeTaskInstances: 恢复任务实例
+2026-04-17 17:18:13.039 | INFO     | __main__:start_server:89 -     - GetProjectMember: 查询工作空间成员详情
+2026-04-17 17:18:13.039 | INFO     | __main__:start_server:91 -     ... and 181 more tools
+2026-04-17 17:18:13.039 | INFO     | __main__:start_server:106 - 
+Initializing LLM service (provider: openai)...
+2026-04-17 17:18:13.039 | ERROR    | app.llm.openai:_init_client:74 - Failed to import openai. Install with: pip install openai
+2026-04-17 17:18:13.040 | WARNING  | __main__:start_server:110 - ⚠️  LLM service initialization failed: No module named 'openai'
+2026-04-17 17:18:13.040 | WARNING  | __main__:start_server:111 - The chat server will work in command-only mode
+2026-04-17 17:18:13.040 | INFO     | __main__:start_server:118 - 
+Initializing Chat Server...
+2026-04-17 17:18:13.041 | INFO     | __main__:start_server:124 - Loading custom system prompt from /Users/jerry/PycharmProjects/Gravix/system_prompt.txt
+2026-04-17 17:18:13.041 | INFO     | __main__:start_server:127 - ✅ Custom system prompt loaded (745 chars)
+2026-04-17 17:18:13.041 | INFO     | app.database.factory:_create_sqlite_adapter:56 - Creating SQLite adapter with path: data/gravix.db
+2026-04-17 17:18:13.041 | INFO     | app.chat.http_server:__init__:80 - ✅ Using database storage
+2026-04-17 17:18:13.042 | INFO     | app.database.sqlite_adapter:connect:52 - ✅ SQLite database connected: data/gravix.db
+2026-04-17 17:18:13.049 | INFO     | app.database.sqlite_adapter:initialize_schema:70 - ✅ Database schema initialized
+2026-04-17 17:18:13.049 | INFO     | app.database.migration:auto_migrate_if_needed:160 - ✅ Database connected for migration
+2026-04-17 17:18:13.050 | INFO     | app.database.migration:auto_migrate_if_needed:181 - 🔄 Starting automatic migration from JSON to database...
+2026-04-17 17:18:13.050 | INFO     | app.database.migration:load_json_data:43 - Loaded JSON data from data/sessions.json
+2026-04-17 17:18:13.050 | INFO     | app.database.migration:migrate_to_database:68 - Migrating 3 sessions to database...
+2026-04-17 17:18:13.065 | INFO     | app.database.migration:migrate_to_database:107 - ✅ Successfully migrated 3/3 sessions
+2026-04-17 17:18:13.066 | INFO     | app.database.migration:_backup_json_file:125 - ✅ JSON file backed up to: data/sessions.json.backup
+2026-04-17 17:18:13.066 | INFO     | app.database.migration:auto_migrate_if_needed:186 - ✅ Migration completed successfully
+2026-04-17 17:18:13.066 | INFO     | app.chat.database_session_manager:__init__:44 - ✅ Database already connected, reusing existing connection
+2026-04-17 17:18:13.067 | INFO     | app.chat.database_session_manager:__init__:49 - ✅ Database Session Manager initialized
+2026-04-17 17:18:13.067 | INFO     | app.chat.http_server:__init__:92 - ✅ Session Manager initialized
+2026-04-17 17:18:13.067 | INFO     | app.chat.http_server:__init__:110 - Static files directory: /Users/jerry/PycharmProjects/Gravix/web/static
+2026-04-17 17:18:13.067 | INFO     | __main__:start_server:141 - 
+============================================================
+2026-04-17 17:18:13.067 | INFO     | __main__:start_server:142 - 🚀 Gravix Services Ready!
+2026-04-17 17:18:13.067 | INFO     | __main__:start_server:143 - ============================================================
+2026-04-17 17:18:13.067 | INFO     | __main__:start_server:144 - 🌐 Web UI: http://localhost:8765
+2026-04-17 17:18:13.068 | INFO     | __main__:start_server:145 - 🔌 WebSocket: ws://localhost:8765
+2026-04-17 17:18:13.068 | INFO     | __main__:start_server:151 - ⚠️  LLM: Not configured (command-only mode)
+2026-04-17 17:18:13.068 | INFO     | __main__:start_server:154 - ⚡ MCP Servers: dataworks
+2026-04-17 17:18:13.068 | INFO     | __main__:start_server:156 - 
+💡 Open your browser and visit: http://localhost:8765
+2026-04-17 17:18:13.068 | INFO     | __main__:start_server:157 - ============================================================
+
+2026-04-17 17:18:13.071 | INFO     | app.chat.http_server:start:891 - ✅ HTTP server started on http://0.0.0.0:8765
+2026-04-17 17:18:13.071 | INFO     | app.chat.http_server:start:892 - ✅ WebSocket endpoint: ws://0.0.0.0:8765/ws
+2026-04-17 17:18:13.071 | INFO     | app.chat.http_server:start:893 - ✅ Session API available at /api/sessions
+2026-04-17 17:18:13.071 | INFO     | app.chat.http_server:start:894 - ✅ Open browser: http://localhost:8765
+2026-04-17 17:18:21.261 | INFO     | app.chat.http_server:handle_websocket:277 - New WebSocket client connected: 4435639264
+2026-04-17 17:18:21.280 | ERROR    | app.chat.http_server:handle_api_sessions:790 - Error listing sessions: Object of type datetime is not JSON serializable
+2026-04-17 17:18:21.771 | INFO     | app.chat.http_server:handle_websocket:277 - New WebSocket client connected: 4436986272
+2026-04-17 17:18:21.793 | ERROR    | app.chat.http_server:handle_api_sessions:790 - Error listing sessions: Object of type datetime is not JSON serializable
+2026-04-17 17:18:48.379 | INFO     | __main__:start_server:48 - ============================================================
+2026-04-17 17:18:48.380 | INFO     | __main__:start_server:49 - Starting Gravix Services
+2026-04-17 17:18:48.380 | INFO     | __main__:start_server:50 - ============================================================
+2026-04-17 17:18:48.380 | INFO     | __main__:start_server:58 - ℹ️  Hot reload disabled - Set ENABLE_HOT_RELOAD=true to enable
+2026-04-17 17:18:48.381 | INFO     | __main__:start_server:59 -    Example: ENABLE_HOT_RELOAD=true python3 run_all.py
+2026-04-17 17:18:48.381 | INFO     | __main__:start_server:62 - Initializing Skills system...
+2026-04-17 17:18:48.381 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'analysis' has no scripts/ directory
+2026-04-17 17:18:48.382 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: calculate (Calculator) from calculate.py
+2026-04-17 17:18:48.383 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'custom_example' has no scripts/ directory
+2026-04-17 17:18:48.383 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: echo (Echo Skill) from echo.py
+2026-04-17 17:18:48.384 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: funboost_task (Funboost Task Executor) from funboost_task.py
+2026-04-17 17:18:48.396 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: system_info (System Information) from system_info.py
+2026-04-17 17:18:48.397 | INFO     | app.skills.registry:_load_all_skills:84 - Total skills registered: 4
+2026-04-17 17:18:48.397 | INFO     | __main__:start_server:68 - Loaded 4 skills:
+2026-04-17 17:18:48.397 | INFO     | __main__:start_server:70 -   - calculate: Calculator
+2026-04-17 17:18:48.397 | INFO     | __main__:start_server:70 -   - echo: Echo Skill
+2026-04-17 17:18:48.397 | INFO     | __main__:start_server:70 -   - funboost_task: Funboost Task Executor
+2026-04-17 17:18:48.398 | INFO     | __main__:start_server:70 -   - system_info: System Information
+2026-04-17 17:18:48.398 | INFO     | __main__:start_server:73 - 
+Initializing MCP system...
+2026-04-17 17:18:48.398 | INFO     | app.mcp.manager:initialize:46 - ============================================================
+2026-04-17 17:18:48.398 | INFO     | app.mcp.manager:initialize:47 - Initializing MCP Servers
+2026-04-17 17:18:48.398 | INFO     | app.mcp.manager:initialize:48 - ============================================================
+2026-04-17 17:18:48.398 | INFO     | app.mcp.manager:initialize:57 - Configuring MCP server: dataworks
+2026-04-17 17:18:48.399 | INFO     | app.mcp.adapters.stdio:connect:71 - Setting REGION: cn-shenzhen
+2026-04-17 17:18:48.399 | INFO     | app.mcp.adapters.stdio:connect:84 - Starting MCP server subprocess: npx -y alibabacloud-dataworks-mcp-server
+2026-04-17 17:18:48.411 | INFO     | app.mcp.adapters.stdio:connect:99 - ✅ MCP server subprocess started (PID: 37204)
+2026-04-17 17:18:55.787 | INFO     | app.mcp.client:connect:92 - Connected to MCP server: {'name': 'dataworks-agent', 'version': '0.0.2'}
+2026-04-17 17:18:55.789 | INFO     | app.mcp.manager:_init_server:108 - ✅ dataworks: Connected successfully
+2026-04-17 17:18:55.790 | INFO     | app.mcp.manager:_init_server:110 -    Server: dataworks-agent v0.0.2
+2026-04-17 17:18:55.790 | INFO     | app.mcp.manager:initialize:66 - 
+============================================================
+2026-04-17 17:18:55.790 | INFO     | app.mcp.manager:initialize:67 - MCP Servers Initialization Complete
+2026-04-17 17:18:55.790 | INFO     | app.mcp.manager:initialize:68 - ✅ Connected: 1/1
+2026-04-17 17:18:55.791 | INFO     | app.mcp.manager:initialize:71 - ============================================================
+
+2026-04-17 17:18:55.791 | INFO     | __main__:start_server:79 - ✅ Connected to 1 MCP server(s):
+2026-04-17 17:18:55.791 | INFO     | __main__:start_server:81 -   - dataworks
+2026-04-17 17:18:55.877 | INFO     | app.mcp.manager:list_all_tools:175 - dataworks: 186 tools available
+2026-04-17 17:18:55.877 | INFO     | __main__:start_server:87 - 
+📦 dataworks - 186 tools:
+2026-04-17 17:18:55.877 | INFO     | __main__:start_server:89 -     - ListWorkflows: 获取工作流列表
+2026-04-17 17:18:55.878 | INFO     | __main__:start_server:89 -     - UpdateMetaCollection: 更新数据地图集合对象
+2026-04-17 17:18:55.878 | INFO     | __main__:start_server:89 -     - CreateResource: 创建数据开发文件资源
+2026-04-17 17:18:55.878 | INFO     | __main__:start_server:89 -     - ResumeTaskInstances: 恢复任务实例
+2026-04-17 17:18:55.878 | INFO     | __main__:start_server:89 -     - GetProjectMember: 查询工作空间成员详情
+2026-04-17 17:18:55.878 | INFO     | __main__:start_server:91 -     ... and 181 more tools
+2026-04-17 17:18:55.878 | INFO     | __main__:start_server:106 - 
+Initializing LLM service (provider: openai)...
+2026-04-17 17:18:56.892 | INFO     | app.llm.openai:_init_client:72 - OpenAI provider initialized with model: Qwen3-32B, timeout: 300.0s
+2026-04-17 17:18:56.892 | INFO     | app.llm.service:_init_provider:146 - LLM service initialized with openai (Qwen3-32B@http://192.168.2.85:8003/v1)
+2026-04-17 17:18:56.892 | INFO     | __main__:start_server:108 - ✅ LLM service ready
+2026-04-17 17:18:56.893 | INFO     | __main__:start_server:118 - 
+Initializing Chat Server...
+2026-04-17 17:18:56.893 | INFO     | __main__:start_server:124 - Loading custom system prompt from /Users/jerry/PycharmProjects/Gravix/system_prompt.txt
+2026-04-17 17:18:56.893 | INFO     | __main__:start_server:127 - ✅ Custom system prompt loaded (745 chars)
+2026-04-17 17:18:56.894 | INFO     | app.database.factory:_create_sqlite_adapter:56 - Creating SQLite adapter with path: data/gravix.db
+2026-04-17 17:18:56.894 | INFO     | app.chat.http_server:__init__:80 - ✅ Using database storage
+2026-04-17 17:18:56.899 | INFO     | app.database.sqlite_adapter:connect:52 - ✅ SQLite database connected: data/gravix.db
+2026-04-17 17:18:56.907 | INFO     | app.database.sqlite_adapter:initialize_schema:70 - ✅ Database schema initialized
+2026-04-17 17:18:56.908 | INFO     | app.database.migration:auto_migrate_if_needed:160 - ✅ Database connected for migration
+2026-04-17 17:18:56.909 | INFO     | app.database.migration:auto_migrate_if_needed:174 - Database already has 3 sessions, skipping migration
+2026-04-17 17:18:56.909 | INFO     | app.chat.database_session_manager:__init__:44 - ✅ Database already connected, reusing existing connection
+2026-04-17 17:18:56.909 | INFO     | app.chat.database_session_manager:__init__:49 - ✅ Database Session Manager initialized
+2026-04-17 17:18:56.910 | INFO     | app.chat.http_server:__init__:92 - ✅ Session Manager initialized
+2026-04-17 17:18:56.910 | INFO     | app.chat.http_server:__init__:110 - Static files directory: /Users/jerry/PycharmProjects/Gravix/web/static
+2026-04-17 17:18:56.910 | INFO     | __main__:start_server:141 - 
+============================================================
+2026-04-17 17:18:56.910 | INFO     | __main__:start_server:142 - 🚀 Gravix Services Ready!
+2026-04-17 17:18:56.910 | INFO     | __main__:start_server:143 - ============================================================
+2026-04-17 17:18:56.911 | INFO     | __main__:start_server:144 - 🌐 Web UI: http://localhost:8765
+2026-04-17 17:18:56.911 | INFO     | __main__:start_server:145 - 🔌 WebSocket: ws://localhost:8765
+2026-04-17 17:18:56.911 | INFO     | __main__:start_server:148 - 🤖 LLM Provider: openai
+2026-04-17 17:18:56.911 | INFO     | __main__:start_server:149 - 📦 LLM Model: Qwen3-32B
+2026-04-17 17:18:56.912 | INFO     | __main__:start_server:154 - ⚡ MCP Servers: dataworks
+2026-04-17 17:18:56.912 | INFO     | __main__:start_server:156 - 
+💡 Open your browser and visit: http://localhost:8765
+2026-04-17 17:18:56.912 | INFO     | __main__:start_server:157 - ============================================================
+
+2026-04-17 17:18:56.914 | ERROR    | __main__:start_server:169 - Error: [Errno 48] error while attempting to bind on address ('0.0.0.0', 8765): address already in use
+2026-04-17 17:19:27.992 | INFO     | __main__:start_server:48 - ============================================================
+2026-04-17 17:19:27.993 | INFO     | __main__:start_server:49 - Starting Gravix Services
+2026-04-17 17:19:27.993 | INFO     | __main__:start_server:50 - ============================================================
+2026-04-17 17:19:27.993 | INFO     | __main__:start_server:58 - ℹ️  Hot reload disabled - Set ENABLE_HOT_RELOAD=true to enable
+2026-04-17 17:19:27.993 | INFO     | __main__:start_server:59 -    Example: ENABLE_HOT_RELOAD=true python3 run_all.py
+2026-04-17 17:19:27.993 | INFO     | __main__:start_server:62 - Initializing Skills system...
+2026-04-17 17:19:27.994 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'analysis' has no scripts/ directory
+2026-04-17 17:19:27.995 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: calculate (Calculator) from calculate.py
+2026-04-17 17:19:27.995 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'custom_example' has no scripts/ directory
+2026-04-17 17:19:27.996 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: echo (Echo Skill) from echo.py
+2026-04-17 17:19:27.996 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: funboost_task (Funboost Task Executor) from funboost_task.py
+2026-04-17 17:19:28.008 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: system_info (System Information) from system_info.py
+2026-04-17 17:19:28.008 | INFO     | app.skills.registry:_load_all_skills:84 - Total skills registered: 4
+2026-04-17 17:19:28.008 | INFO     | __main__:start_server:68 - Loaded 4 skills:
+2026-04-17 17:19:28.008 | INFO     | __main__:start_server:70 -   - calculate: Calculator
+2026-04-17 17:19:28.008 | INFO     | __main__:start_server:70 -   - echo: Echo Skill
+2026-04-17 17:19:28.009 | INFO     | __main__:start_server:70 -   - funboost_task: Funboost Task Executor
+2026-04-17 17:19:28.009 | INFO     | __main__:start_server:70 -   - system_info: System Information
+2026-04-17 17:19:28.009 | INFO     | __main__:start_server:73 - 
+Initializing MCP system...
+2026-04-17 17:19:28.009 | INFO     | app.mcp.manager:initialize:46 - ============================================================
+2026-04-17 17:19:28.009 | INFO     | app.mcp.manager:initialize:47 - Initializing MCP Servers
+2026-04-17 17:19:28.009 | INFO     | app.mcp.manager:initialize:48 - ============================================================
+2026-04-17 17:19:28.010 | INFO     | app.mcp.manager:initialize:57 - Configuring MCP server: dataworks
+2026-04-17 17:19:28.010 | INFO     | app.mcp.adapters.stdio:connect:71 - Setting REGION: cn-shenzhen
+2026-04-17 17:19:28.010 | INFO     | app.mcp.adapters.stdio:connect:84 - Starting MCP server subprocess: npx -y alibabacloud-dataworks-mcp-server
+2026-04-17 17:19:28.021 | INFO     | app.mcp.adapters.stdio:connect:99 - ✅ MCP server subprocess started (PID: 37420)
+2026-04-17 17:19:35.500 | INFO     | app.mcp.client:connect:92 - Connected to MCP server: {'name': 'dataworks-agent', 'version': '0.0.2'}
+2026-04-17 17:19:35.501 | INFO     | app.mcp.manager:_init_server:108 - ✅ dataworks: Connected successfully
+2026-04-17 17:19:35.501 | INFO     | app.mcp.manager:_init_server:110 -    Server: dataworks-agent v0.0.2
+2026-04-17 17:19:35.502 | INFO     | app.mcp.manager:initialize:66 - 
+============================================================
+2026-04-17 17:19:35.502 | INFO     | app.mcp.manager:initialize:67 - MCP Servers Initialization Complete
+2026-04-17 17:19:35.502 | INFO     | app.mcp.manager:initialize:68 - ✅ Connected: 1/1
+2026-04-17 17:19:35.503 | INFO     | app.mcp.manager:initialize:71 - ============================================================
+
+2026-04-17 17:19:35.503 | INFO     | __main__:start_server:79 - ✅ Connected to 1 MCP server(s):
+2026-04-17 17:19:35.503 | INFO     | __main__:start_server:81 -   - dataworks
+2026-04-17 17:19:35.599 | INFO     | app.mcp.manager:list_all_tools:175 - dataworks: 186 tools available
+2026-04-17 17:19:35.599 | INFO     | __main__:start_server:87 - 
+📦 dataworks - 186 tools:
+2026-04-17 17:19:35.599 | INFO     | __main__:start_server:89 -     - ListWorkflows: 获取工作流列表
+2026-04-17 17:19:35.599 | INFO     | __main__:start_server:89 -     - UpdateMetaCollection: 更新数据地图集合对象
+2026-04-17 17:19:35.599 | INFO     | __main__:start_server:89 -     - CreateResource: 创建数据开发文件资源
+2026-04-17 17:19:35.600 | INFO     | __main__:start_server:89 -     - ResumeTaskInstances: 恢复任务实例
+2026-04-17 17:19:35.600 | INFO     | __main__:start_server:89 -     - GetProjectMember: 查询工作空间成员详情
+2026-04-17 17:19:35.600 | INFO     | __main__:start_server:91 -     ... and 181 more tools
+2026-04-17 17:19:35.600 | INFO     | __main__:start_server:106 - 
+Initializing LLM service (provider: openai)...
+2026-04-17 17:19:36.675 | INFO     | app.llm.openai:_init_client:72 - OpenAI provider initialized with model: Qwen3-32B, timeout: 300.0s
+2026-04-17 17:19:36.675 | INFO     | app.llm.service:_init_provider:146 - LLM service initialized with openai (Qwen3-32B@http://192.168.2.85:8003/v1)
+2026-04-17 17:19:36.675 | INFO     | __main__:start_server:108 - ✅ LLM service ready
+2026-04-17 17:19:36.676 | INFO     | __main__:start_server:118 - 
+Initializing Chat Server...
+2026-04-17 17:19:36.676 | INFO     | __main__:start_server:124 - Loading custom system prompt from /Users/jerry/PycharmProjects/Gravix/system_prompt.txt
+2026-04-17 17:19:36.676 | INFO     | __main__:start_server:127 - ✅ Custom system prompt loaded (745 chars)
+2026-04-17 17:19:36.677 | INFO     | app.database.factory:_create_sqlite_adapter:56 - Creating SQLite adapter with path: data/gravix.db
+2026-04-17 17:19:36.677 | INFO     | app.chat.http_server:__init__:80 - ✅ Using database storage
+2026-04-17 17:19:36.678 | INFO     | app.database.sqlite_adapter:connect:52 - ✅ SQLite database connected: data/gravix.db
+2026-04-17 17:19:36.679 | INFO     | app.database.sqlite_adapter:initialize_schema:70 - ✅ Database schema initialized
+2026-04-17 17:19:36.679 | INFO     | app.database.migration:auto_migrate_if_needed:160 - ✅ Database connected for migration
+2026-04-17 17:19:36.681 | INFO     | app.database.migration:auto_migrate_if_needed:174 - Database already has 3 sessions, skipping migration
+2026-04-17 17:19:36.681 | INFO     | app.chat.database_session_manager:__init__:44 - ✅ Database already connected, reusing existing connection
+2026-04-17 17:19:36.682 | INFO     | app.chat.database_session_manager:__init__:49 - ✅ Database Session Manager initialized
+2026-04-17 17:19:36.682 | INFO     | app.chat.http_server:__init__:92 - ✅ Session Manager initialized
+2026-04-17 17:19:36.682 | INFO     | app.chat.http_server:__init__:110 - Static files directory: /Users/jerry/PycharmProjects/Gravix/web/static
+2026-04-17 17:19:36.682 | INFO     | __main__:start_server:141 - 
+============================================================
+2026-04-17 17:19:36.682 | INFO     | __main__:start_server:142 - 🚀 Gravix Services Ready!
+2026-04-17 17:19:36.683 | INFO     | __main__:start_server:143 - ============================================================
+2026-04-17 17:19:36.683 | INFO     | __main__:start_server:144 - 🌐 Web UI: http://localhost:8765
+2026-04-17 17:19:36.683 | INFO     | __main__:start_server:145 - 🔌 WebSocket: ws://localhost:8765
+2026-04-17 17:19:36.683 | INFO     | __main__:start_server:148 - 🤖 LLM Provider: openai
+2026-04-17 17:19:36.684 | INFO     | __main__:start_server:149 - 📦 LLM Model: Qwen3-32B
+2026-04-17 17:19:36.684 | INFO     | __main__:start_server:154 - ⚡ MCP Servers: dataworks
+2026-04-17 17:19:36.684 | INFO     | __main__:start_server:156 - 
+💡 Open your browser and visit: http://localhost:8765
+2026-04-17 17:19:36.684 | INFO     | __main__:start_server:157 - ============================================================
+
+2026-04-17 17:19:36.685 | INFO     | app.chat.http_server:start:891 - ✅ HTTP server started on http://0.0.0.0:8765
+2026-04-17 17:19:36.686 | INFO     | app.chat.http_server:start:892 - ✅ WebSocket endpoint: ws://0.0.0.0:8765/ws
+2026-04-17 17:19:36.686 | INFO     | app.chat.http_server:start:893 - ✅ Session API available at /api/sessions
+2026-04-17 17:19:36.686 | INFO     | app.chat.http_server:start:894 - ✅ Open browser: http://localhost:8765
+2026-04-17 17:19:39.227 | INFO     | app.chat.http_server:handle_websocket:277 - New WebSocket client connected: 5119182160
+2026-04-17 17:19:39.232 | ERROR    | app.chat.http_server:handle_api_sessions:790 - Error listing sessions: Object of type datetime is not JSON serializable
+2026-04-17 17:19:39.984 | INFO     | app.chat.http_server:handle_websocket:277 - New WebSocket client connected: 5218554960
+2026-04-17 17:19:40.073 | INFO     | app.chat.http_server:handle_websocket:277 - New WebSocket client connected: 5218559632
+2026-04-17 17:19:40.529 | ERROR    | app.chat.http_server:handle_api_sessions:790 - Error listing sessions: Object of type datetime is not JSON serializable
+2026-04-17 17:19:41.388 | ERROR    | app.chat.http_server:handle_api_sessions:790 - Error listing sessions: Object of type datetime is not JSON serializable
+2026-04-17 17:20:53.386 | INFO     | __main__:start_server:48 - ============================================================
+2026-04-17 17:20:53.386 | INFO     | __main__:start_server:49 - Starting Gravix Services
+2026-04-17 17:20:53.386 | INFO     | __main__:start_server:50 - ============================================================
+2026-04-17 17:20:53.387 | INFO     | __main__:start_server:58 - ℹ️  Hot reload disabled - Set ENABLE_HOT_RELOAD=true to enable
+2026-04-17 17:20:53.387 | INFO     | __main__:start_server:59 -    Example: ENABLE_HOT_RELOAD=true python3 run_all.py
+2026-04-17 17:20:53.387 | INFO     | __main__:start_server:62 - Initializing Skills system...
+2026-04-17 17:20:53.387 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'analysis' has no scripts/ directory
+2026-04-17 17:20:53.388 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: calculate (Calculator) from calculate.py
+2026-04-17 17:20:53.388 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'custom_example' has no scripts/ directory
+2026-04-17 17:20:53.389 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: echo (Echo Skill) from echo.py
+2026-04-17 17:20:53.390 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: funboost_task (Funboost Task Executor) from funboost_task.py
+2026-04-17 17:20:53.402 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: system_info (System Information) from system_info.py
+2026-04-17 17:20:53.402 | INFO     | app.skills.registry:_load_all_skills:84 - Total skills registered: 4
+2026-04-17 17:20:53.402 | INFO     | __main__:start_server:68 - Loaded 4 skills:
+2026-04-17 17:20:53.402 | INFO     | __main__:start_server:70 -   - calculate: Calculator
+2026-04-17 17:20:53.403 | INFO     | __main__:start_server:70 -   - echo: Echo Skill
+2026-04-17 17:20:53.403 | INFO     | __main__:start_server:70 -   - funboost_task: Funboost Task Executor
+2026-04-17 17:20:53.403 | INFO     | __main__:start_server:70 -   - system_info: System Information
+2026-04-17 17:20:53.403 | INFO     | __main__:start_server:73 - 
+Initializing MCP system...
+2026-04-17 17:20:53.403 | INFO     | app.mcp.manager:initialize:46 - ============================================================
+2026-04-17 17:20:53.403 | INFO     | app.mcp.manager:initialize:47 - Initializing MCP Servers
+2026-04-17 17:20:53.403 | INFO     | app.mcp.manager:initialize:48 - ============================================================
+2026-04-17 17:20:53.403 | INFO     | app.mcp.manager:initialize:57 - Configuring MCP server: dataworks
+2026-04-17 17:20:53.404 | INFO     | app.mcp.adapters.stdio:connect:71 - Setting REGION: cn-shenzhen
+2026-04-17 17:20:53.404 | INFO     | app.mcp.adapters.stdio:connect:84 - Starting MCP server subprocess: npx -y alibabacloud-dataworks-mcp-server
+2026-04-17 17:20:53.411 | INFO     | app.mcp.adapters.stdio:connect:99 - ✅ MCP server subprocess started (PID: 37577)
+2026-04-17 17:21:01.219 | INFO     | app.mcp.client:connect:92 - Connected to MCP server: {'name': 'dataworks-agent', 'version': '0.0.2'}
+2026-04-17 17:21:01.220 | INFO     | app.mcp.manager:_init_server:108 - ✅ dataworks: Connected successfully
+2026-04-17 17:21:01.220 | INFO     | app.mcp.manager:_init_server:110 -    Server: dataworks-agent v0.0.2
+2026-04-17 17:21:01.221 | INFO     | app.mcp.manager:initialize:66 - 
+============================================================
+2026-04-17 17:21:01.221 | INFO     | app.mcp.manager:initialize:67 - MCP Servers Initialization Complete
+2026-04-17 17:21:01.221 | INFO     | app.mcp.manager:initialize:68 - ✅ Connected: 1/1
+2026-04-17 17:21:01.221 | INFO     | app.mcp.manager:initialize:71 - ============================================================
+
+2026-04-17 17:21:01.222 | INFO     | __main__:start_server:79 - ✅ Connected to 1 MCP server(s):
+2026-04-17 17:21:01.222 | INFO     | __main__:start_server:81 -   - dataworks
+2026-04-17 17:21:01.321 | INFO     | app.mcp.manager:list_all_tools:175 - dataworks: 186 tools available
+2026-04-17 17:21:01.321 | INFO     | __main__:start_server:87 - 
+📦 dataworks - 186 tools:
+2026-04-17 17:21:01.321 | INFO     | __main__:start_server:89 -     - ListWorkflows: 获取工作流列表
+2026-04-17 17:21:01.321 | INFO     | __main__:start_server:89 -     - UpdateMetaCollection: 更新数据地图集合对象
+2026-04-17 17:21:01.321 | INFO     | __main__:start_server:89 -     - CreateResource: 创建数据开发文件资源
+2026-04-17 17:21:01.321 | INFO     | __main__:start_server:89 -     - ResumeTaskInstances: 恢复任务实例
+2026-04-17 17:21:01.321 | INFO     | __main__:start_server:89 -     - GetProjectMember: 查询工作空间成员详情
+2026-04-17 17:21:01.321 | INFO     | __main__:start_server:91 -     ... and 181 more tools
+2026-04-17 17:21:01.322 | INFO     | __main__:start_server:106 - 
+Initializing LLM service (provider: openai)...
+2026-04-17 17:21:01.322 | ERROR    | app.llm.openai:_init_client:74 - Failed to import openai. Install with: pip install openai
+2026-04-17 17:21:01.322 | WARNING  | __main__:start_server:110 - ⚠️  LLM service initialization failed: No module named 'openai'
+2026-04-17 17:21:01.323 | WARNING  | __main__:start_server:111 - The chat server will work in command-only mode
+2026-04-17 17:21:01.323 | INFO     | __main__:start_server:118 - 
+Initializing Chat Server...
+2026-04-17 17:21:01.323 | INFO     | __main__:start_server:124 - Loading custom system prompt from /Users/jerry/PycharmProjects/Gravix/system_prompt.txt
+2026-04-17 17:21:01.324 | INFO     | __main__:start_server:127 - ✅ Custom system prompt loaded (745 chars)
+2026-04-17 17:21:01.324 | INFO     | app.database.factory:_create_sqlite_adapter:56 - Creating SQLite adapter with path: data/gravix.db
+2026-04-17 17:21:01.324 | INFO     | app.chat.http_server:__init__:80 - ✅ Using database storage
+2026-04-17 17:21:01.326 | INFO     | app.database.sqlite_adapter:connect:52 - ✅ SQLite database connected: data/gravix.db
+2026-04-17 17:21:01.326 | INFO     | app.database.sqlite_adapter:initialize_schema:70 - ✅ Database schema initialized
+2026-04-17 17:21:01.326 | INFO     | app.database.migration:auto_migrate_if_needed:160 - ✅ Database connected for migration
+2026-04-17 17:21:01.328 | INFO     | app.database.migration:auto_migrate_if_needed:174 - Database already has 3 sessions, skipping migration
+2026-04-17 17:21:01.328 | INFO     | app.chat.database_session_manager:__init__:44 - ✅ Database already connected, reusing existing connection
+2026-04-17 17:21:01.328 | INFO     | app.chat.database_session_manager:__init__:49 - ✅ Database Session Manager initialized
+2026-04-17 17:21:01.329 | INFO     | app.chat.http_server:__init__:92 - ✅ Session Manager initialized
+2026-04-17 17:21:01.329 | INFO     | app.chat.http_server:__init__:110 - Static files directory: /Users/jerry/PycharmProjects/Gravix/web/static
+2026-04-17 17:21:01.329 | INFO     | __main__:start_server:141 - 
+============================================================
+2026-04-17 17:21:01.329 | INFO     | __main__:start_server:142 - 🚀 Gravix Services Ready!
+2026-04-17 17:21:01.329 | INFO     | __main__:start_server:143 - ============================================================
+2026-04-17 17:21:01.329 | INFO     | __main__:start_server:144 - 🌐 Web UI: http://localhost:8765
+2026-04-17 17:21:01.330 | INFO     | __main__:start_server:145 - 🔌 WebSocket: ws://localhost:8765
+2026-04-17 17:21:01.330 | INFO     | __main__:start_server:151 - ⚠️  LLM: Not configured (command-only mode)
+2026-04-17 17:21:01.330 | INFO     | __main__:start_server:154 - ⚡ MCP Servers: dataworks
+2026-04-17 17:21:01.330 | INFO     | __main__:start_server:156 - 
+💡 Open your browser and visit: http://localhost:8765
+2026-04-17 17:21:01.330 | INFO     | __main__:start_server:157 - ============================================================
+
+2026-04-17 17:21:01.332 | INFO     | app.chat.http_server:start:891 - ✅ HTTP server started on http://0.0.0.0:8765
+2026-04-17 17:21:01.332 | INFO     | app.chat.http_server:start:892 - ✅ WebSocket endpoint: ws://0.0.0.0:8765/ws
+2026-04-17 17:21:01.332 | INFO     | app.chat.http_server:start:893 - ✅ Session API available at /api/sessions
+2026-04-17 17:21:01.332 | INFO     | app.chat.http_server:start:894 - ✅ Open browser: http://localhost:8765
+2026-04-17 17:21:03.004 | INFO     | app.chat.http_server:handle_websocket:277 - New WebSocket client connected: 4595948608
+2026-04-17 17:21:03.216 | INFO     | app.chat.http_server:handle_websocket:277 - New WebSocket client connected: 4597298512
+2026-04-17 17:21:04.007 | INFO     | app.chat.http_server:handle_websocket:277 - New WebSocket client connected: 4596818176
+2026-04-17 17:21:30.824 | INFO     | __main__:start_server:48 - ============================================================
+2026-04-17 17:21:30.824 | INFO     | __main__:start_server:49 - Starting Gravix Services
+2026-04-17 17:21:30.824 | INFO     | __main__:start_server:50 - ============================================================
+2026-04-17 17:21:30.825 | INFO     | __main__:start_server:58 - ℹ️  Hot reload disabled - Set ENABLE_HOT_RELOAD=true to enable
+2026-04-17 17:21:30.825 | INFO     | __main__:start_server:59 -    Example: ENABLE_HOT_RELOAD=true python3 run_all.py
+2026-04-17 17:21:30.825 | INFO     | __main__:start_server:62 - Initializing Skills system...
+2026-04-17 17:21:30.826 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'analysis' has no scripts/ directory
+2026-04-17 17:21:30.827 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: calculate (Calculator) from calculate.py
+2026-04-17 17:21:30.827 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'custom_example' has no scripts/ directory
+2026-04-17 17:21:30.828 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: echo (Echo Skill) from echo.py
+2026-04-17 17:21:30.828 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: funboost_task (Funboost Task Executor) from funboost_task.py
+2026-04-17 17:21:30.841 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: system_info (System Information) from system_info.py
+2026-04-17 17:21:30.842 | INFO     | app.skills.registry:_load_all_skills:84 - Total skills registered: 4
+2026-04-17 17:21:30.842 | INFO     | __main__:start_server:68 - Loaded 4 skills:
+2026-04-17 17:21:30.842 | INFO     | __main__:start_server:70 -   - calculate: Calculator
+2026-04-17 17:21:30.842 | INFO     | __main__:start_server:70 -   - echo: Echo Skill
+2026-04-17 17:21:30.842 | INFO     | __main__:start_server:70 -   - funboost_task: Funboost Task Executor
+2026-04-17 17:21:30.843 | INFO     | __main__:start_server:70 -   - system_info: System Information
+2026-04-17 17:21:30.843 | INFO     | __main__:start_server:73 - 
+Initializing MCP system...
+2026-04-17 17:21:30.843 | INFO     | app.mcp.manager:initialize:46 - ============================================================
+2026-04-17 17:21:30.843 | INFO     | app.mcp.manager:initialize:47 - Initializing MCP Servers
+2026-04-17 17:21:30.843 | INFO     | app.mcp.manager:initialize:48 - ============================================================
+2026-04-17 17:21:30.843 | INFO     | app.mcp.manager:initialize:57 - Configuring MCP server: dataworks
+2026-04-17 17:21:30.844 | INFO     | app.mcp.adapters.stdio:connect:71 - Setting REGION: cn-shenzhen
+2026-04-17 17:21:30.844 | INFO     | app.mcp.adapters.stdio:connect:84 - Starting MCP server subprocess: npx -y alibabacloud-dataworks-mcp-server
+2026-04-17 17:21:30.857 | INFO     | app.mcp.adapters.stdio:connect:99 - ✅ MCP server subprocess started (PID: 37642)
+2026-04-17 17:21:43.126 | INFO     | __main__:start_server:48 - ============================================================
+2026-04-17 17:21:43.126 | INFO     | __main__:start_server:49 - Starting Gravix Services
+2026-04-17 17:21:43.126 | INFO     | __main__:start_server:50 - ============================================================
+2026-04-17 17:21:43.127 | INFO     | __main__:start_server:58 - ℹ️  Hot reload disabled - Set ENABLE_HOT_RELOAD=true to enable
+2026-04-17 17:21:43.127 | INFO     | __main__:start_server:59 -    Example: ENABLE_HOT_RELOAD=true python3 run_all.py
+2026-04-17 17:21:43.128 | INFO     | __main__:start_server:62 - Initializing Skills system...
+2026-04-17 17:21:43.128 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'analysis' has no scripts/ directory
+2026-04-17 17:21:43.129 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: calculate (Calculator) from calculate.py
+2026-04-17 17:21:43.130 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'custom_example' has no scripts/ directory
+2026-04-17 17:21:43.131 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: echo (Echo Skill) from echo.py
+2026-04-17 17:21:43.133 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: funboost_task (Funboost Task Executor) from funboost_task.py
+2026-04-17 17:21:43.185 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: system_info (System Information) from system_info.py
+2026-04-17 17:21:43.186 | INFO     | app.skills.registry:_load_all_skills:84 - Total skills registered: 4
+2026-04-17 17:21:43.186 | INFO     | __main__:start_server:68 - Loaded 4 skills:
+2026-04-17 17:21:43.186 | INFO     | __main__:start_server:70 -   - calculate: Calculator
+2026-04-17 17:21:43.186 | INFO     | __main__:start_server:70 -   - echo: Echo Skill
+2026-04-17 17:21:43.187 | INFO     | __main__:start_server:70 -   - funboost_task: Funboost Task Executor
+2026-04-17 17:21:43.187 | INFO     | __main__:start_server:70 -   - system_info: System Information
+2026-04-17 17:21:43.187 | INFO     | __main__:start_server:73 - 
+Initializing MCP system...
+2026-04-17 17:21:43.188 | INFO     | app.mcp.manager:initialize:46 - ============================================================
+2026-04-17 17:21:43.188 | INFO     | app.mcp.manager:initialize:47 - Initializing MCP Servers
+2026-04-17 17:21:43.188 | INFO     | app.mcp.manager:initialize:48 - ============================================================
+2026-04-17 17:21:43.189 | INFO     | app.mcp.manager:initialize:57 - Configuring MCP server: dataworks
+2026-04-17 17:21:43.189 | INFO     | app.mcp.adapters.stdio:connect:71 - Setting REGION: cn-shenzhen
+2026-04-17 17:21:43.190 | INFO     | app.mcp.adapters.stdio:connect:84 - Starting MCP server subprocess: npx -y alibabacloud-dataworks-mcp-server
+2026-04-17 17:21:43.207 | INFO     | app.mcp.adapters.stdio:connect:99 - ✅ MCP server subprocess started (PID: 37712)
+2026-04-17 17:21:50.668 | INFO     | app.mcp.client:connect:92 - Connected to MCP server: {'name': 'dataworks-agent', 'version': '0.0.2'}
+2026-04-17 17:21:50.668 | INFO     | app.mcp.manager:_init_server:108 - ✅ dataworks: Connected successfully
+2026-04-17 17:21:50.669 | INFO     | app.mcp.manager:_init_server:110 -    Server: dataworks-agent v0.0.2
+2026-04-17 17:21:50.669 | INFO     | app.mcp.manager:initialize:66 - 
+============================================================
+2026-04-17 17:21:50.670 | INFO     | app.mcp.manager:initialize:67 - MCP Servers Initialization Complete
+2026-04-17 17:21:50.670 | INFO     | app.mcp.manager:initialize:68 - ✅ Connected: 1/1
+2026-04-17 17:21:50.670 | INFO     | app.mcp.manager:initialize:71 - ============================================================
+
+2026-04-17 17:21:50.671 | INFO     | __main__:start_server:79 - ✅ Connected to 1 MCP server(s):
+2026-04-17 17:21:50.671 | INFO     | __main__:start_server:81 -   - dataworks
+2026-04-17 17:21:50.759 | INFO     | app.mcp.manager:list_all_tools:175 - dataworks: 186 tools available
+2026-04-17 17:21:50.759 | INFO     | __main__:start_server:87 - 
+📦 dataworks - 186 tools:
+2026-04-17 17:21:50.759 | INFO     | __main__:start_server:89 -     - ListWorkflows: 获取工作流列表
+2026-04-17 17:21:50.759 | INFO     | __main__:start_server:89 -     - UpdateMetaCollection: 更新数据地图集合对象
+2026-04-17 17:21:50.760 | INFO     | __main__:start_server:89 -     - CreateResource: 创建数据开发文件资源
+2026-04-17 17:21:50.760 | INFO     | __main__:start_server:89 -     - ResumeTaskInstances: 恢复任务实例
+2026-04-17 17:21:50.760 | INFO     | __main__:start_server:89 -     - GetProjectMember: 查询工作空间成员详情
+2026-04-17 17:21:50.760 | INFO     | __main__:start_server:91 -     ... and 181 more tools
+2026-04-17 17:21:50.760 | INFO     | __main__:start_server:106 - 
+Initializing LLM service (provider: openai)...
+2026-04-17 17:21:51.891 | INFO     | app.llm.openai:_init_client:72 - OpenAI provider initialized with model: Qwen3-32B, timeout: 300.0s
+2026-04-17 17:21:51.892 | INFO     | app.llm.service:_init_provider:146 - LLM service initialized with openai (Qwen3-32B@http://192.168.2.85:8003/v1)
+2026-04-17 17:21:51.892 | INFO     | __main__:start_server:108 - ✅ LLM service ready
+2026-04-17 17:21:51.893 | INFO     | __main__:start_server:118 - 
+Initializing Chat Server...
+2026-04-17 17:21:51.893 | INFO     | __main__:start_server:124 - Loading custom system prompt from /Users/jerry/PycharmProjects/Gravix/system_prompt.txt
+2026-04-17 17:21:51.893 | INFO     | __main__:start_server:127 - ✅ Custom system prompt loaded (745 chars)
+2026-04-17 17:21:51.894 | INFO     | app.database.factory:_create_sqlite_adapter:56 - Creating SQLite adapter with path: data/gravix.db
+2026-04-17 17:21:51.894 | INFO     | app.chat.http_server:__init__:80 - ✅ Using database storage
+2026-04-17 17:21:51.899 | INFO     | app.database.sqlite_adapter:connect:52 - ✅ SQLite database connected: data/gravix.db
+2026-04-17 17:21:51.908 | INFO     | app.database.sqlite_adapter:initialize_schema:70 - ✅ Database schema initialized
+2026-04-17 17:21:51.908 | INFO     | app.database.migration:auto_migrate_if_needed:160 - ✅ Database connected for migration
+2026-04-17 17:21:51.910 | INFO     | app.database.migration:auto_migrate_if_needed:174 - Database already has 3 sessions, skipping migration
+2026-04-17 17:21:51.910 | INFO     | app.chat.database_session_manager:__init__:44 - ✅ Database already connected, reusing existing connection
+2026-04-17 17:21:51.911 | INFO     | app.chat.database_session_manager:__init__:49 - ✅ Database Session Manager initialized
+2026-04-17 17:21:51.911 | INFO     | app.chat.http_server:__init__:92 - ✅ Session Manager initialized
+2026-04-17 17:21:51.911 | INFO     | app.chat.http_server:__init__:110 - Static files directory: /Users/jerry/PycharmProjects/Gravix/web/static
+2026-04-17 17:21:51.911 | INFO     | __main__:start_server:141 - 
+============================================================
+2026-04-17 17:21:51.911 | INFO     | __main__:start_server:142 - 🚀 Gravix Services Ready!
+2026-04-17 17:21:51.912 | INFO     | __main__:start_server:143 - ============================================================
+2026-04-17 17:21:51.912 | INFO     | __main__:start_server:144 - 🌐 Web UI: http://localhost:8765
+2026-04-17 17:21:51.912 | INFO     | __main__:start_server:145 - 🔌 WebSocket: ws://localhost:8765
+2026-04-17 17:21:51.912 | INFO     | __main__:start_server:148 - 🤖 LLM Provider: openai
+2026-04-17 17:21:51.912 | INFO     | __main__:start_server:149 - 📦 LLM Model: Qwen3-32B
+2026-04-17 17:21:51.913 | INFO     | __main__:start_server:154 - ⚡ MCP Servers: dataworks
+2026-04-17 17:21:51.913 | INFO     | __main__:start_server:156 - 
+💡 Open your browser and visit: http://localhost:8765
+2026-04-17 17:21:51.913 | INFO     | __main__:start_server:157 - ============================================================
+
+2026-04-17 17:21:51.914 | ERROR    | __main__:start_server:169 - Error: [Errno 48] error while attempting to bind on address ('0.0.0.0', 8765): address already in use
+2026-04-17 17:22:11.237 | INFO     | __main__:start_server:48 - ============================================================
+2026-04-17 17:22:11.238 | INFO     | __main__:start_server:49 - Starting Gravix Services
+2026-04-17 17:22:11.238 | INFO     | __main__:start_server:50 - ============================================================
+2026-04-17 17:22:11.238 | INFO     | __main__:start_server:58 - ℹ️  Hot reload disabled - Set ENABLE_HOT_RELOAD=true to enable
+2026-04-17 17:22:11.238 | INFO     | __main__:start_server:59 -    Example: ENABLE_HOT_RELOAD=true python3 run_all.py
+2026-04-17 17:22:11.239 | INFO     | __main__:start_server:62 - Initializing Skills system...
+2026-04-17 17:22:11.239 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'analysis' has no scripts/ directory
+2026-04-17 17:22:11.240 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: calculate (Calculator) from calculate.py
+2026-04-17 17:22:11.241 | WARNING  | app.skills.registry:_load_skill_from_directory:97 - Skill 'custom_example' has no scripts/ directory
+2026-04-17 17:22:11.241 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: echo (Echo Skill) from echo.py
+2026-04-17 17:22:11.242 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: funboost_task (Funboost Task Executor) from funboost_task.py
+2026-04-17 17:22:11.255 | INFO     | app.skills.registry:_load_skill_from_file:158 - Registered skill: system_info (System Information) from system_info.py
+2026-04-17 17:22:11.255 | INFO     | app.skills.registry:_load_all_skills:84 - Total skills registered: 4
+2026-04-17 17:22:11.255 | INFO     | __main__:start_server:68 - Loaded 4 skills:
+2026-04-17 17:22:11.256 | INFO     | __main__:start_server:70 -   - calculate: Calculator
+2026-04-17 17:22:11.256 | INFO     | __main__:start_server:70 -   - echo: Echo Skill
+2026-04-17 17:22:11.256 | INFO     | __main__:start_server:70 -   - funboost_task: Funboost Task Executor
+2026-04-17 17:22:11.256 | INFO     | __main__:start_server:70 -   - system_info: System Information
+2026-04-17 17:22:11.256 | INFO     | __main__:start_server:73 - 
+Initializing MCP system...
+2026-04-17 17:22:11.256 | INFO     | app.mcp.manager:initialize:46 - ============================================================
+2026-04-17 17:22:11.257 | INFO     | app.mcp.manager:initialize:47 - Initializing MCP Servers
+2026-04-17 17:22:11.257 | INFO     | app.mcp.manager:initialize:48 - ============================================================
+2026-04-17 17:22:11.257 | INFO     | app.mcp.manager:initialize:57 - Configuring MCP server: dataworks
+2026-04-17 17:22:11.257 | INFO     | app.mcp.adapters.stdio:connect:71 - Setting REGION: cn-shenzhen
+2026-04-17 17:22:11.258 | INFO     | app.mcp.adapters.stdio:connect:84 - Starting MCP server subprocess: npx -y alibabacloud-dataworks-mcp-server
+2026-04-17 17:22:11.268 | INFO     | app.mcp.adapters.stdio:connect:99 - ✅ MCP server subprocess started (PID: 37850)
+2026-04-17 17:22:18.486 | INFO     | app.mcp.client:connect:92 - Connected to MCP server: {'name': 'dataworks-agent', 'version': '0.0.2'}
+2026-04-17 17:22:18.486 | INFO     | app.mcp.manager:_init_server:108 - ✅ dataworks: Connected successfully
+2026-04-17 17:22:18.486 | INFO     | app.mcp.manager:_init_server:110 -    Server: dataworks-agent v0.0.2
+2026-04-17 17:22:18.487 | INFO     | app.mcp.manager:initialize:66 - 
+============================================================
+2026-04-17 17:22:18.487 | INFO     | app.mcp.manager:initialize:67 - MCP Servers Initialization Complete
+2026-04-17 17:22:18.488 | INFO     | app.mcp.manager:initialize:68 - ✅ Connected: 1/1
+2026-04-17 17:22:18.488 | INFO     | app.mcp.manager:initialize:71 - ============================================================
+
+2026-04-17 17:22:18.488 | INFO     | __main__:start_server:79 - ✅ Connected to 1 MCP server(s):
+2026-04-17 17:22:18.488 | INFO     | __main__:start_server:81 -   - dataworks
+2026-04-17 17:22:18.577 | INFO     | app.mcp.manager:list_all_tools:175 - dataworks: 186 tools available
+2026-04-17 17:22:18.577 | INFO     | __main__:start_server:87 - 
+📦 dataworks - 186 tools:
+2026-04-17 17:22:18.577 | INFO     | __main__:start_server:89 -     - ListWorkflows: 获取工作流列表
+2026-04-17 17:22:18.577 | INFO     | __main__:start_server:89 -     - UpdateMetaCollection: 更新数据地图集合对象
+2026-04-17 17:22:18.577 | INFO     | __main__:start_server:89 -     - CreateResource: 创建数据开发文件资源
+2026-04-17 17:22:18.577 | INFO     | __main__:start_server:89 -     - ResumeTaskInstances: 恢复任务实例
+2026-04-17 17:22:18.578 | INFO     | __main__:start_server:89 -     - GetProjectMember: 查询工作空间成员详情
+2026-04-17 17:22:18.578 | INFO     | __main__:start_server:91 -     ... and 181 more tools
+2026-04-17 17:22:18.578 | INFO     | __main__:start_server:106 - 
+Initializing LLM service (provider: openai)...
+2026-04-17 17:22:19.315 | INFO     | app.llm.openai:_init_client:72 - OpenAI provider initialized with model: Qwen3-32B, timeout: 300.0s
+2026-04-17 17:22:19.315 | INFO     | app.llm.service:_init_provider:146 - LLM service initialized with openai (Qwen3-32B@http://192.168.2.85:8003/v1)
+2026-04-17 17:22:19.315 | INFO     | __main__:start_server:108 - ✅ LLM service ready
+2026-04-17 17:22:19.316 | INFO     | __main__:start_server:118 - 
+Initializing Chat Server...
+2026-04-17 17:22:19.316 | INFO     | __main__:start_server:124 - Loading custom system prompt from /Users/jerry/PycharmProjects/Gravix/system_prompt.txt
+2026-04-17 17:22:19.316 | INFO     | __main__:start_server:127 - ✅ Custom system prompt loaded (745 chars)
+2026-04-17 17:22:19.317 | INFO     | app.database.factory:_create_sqlite_adapter:56 - Creating SQLite adapter with path: data/gravix.db
+2026-04-17 17:22:19.317 | INFO     | app.chat.http_server:__init__:80 - ✅ Using database storage
+2026-04-17 17:22:19.317 | INFO     | app.database.sqlite_adapter:connect:52 - ✅ SQLite database connected: data/gravix.db
+2026-04-17 17:22:19.318 | INFO     | app.database.sqlite_adapter:initialize_schema:70 - ✅ Database schema initialized
+2026-04-17 17:22:19.318 | INFO     | app.database.migration:auto_migrate_if_needed:160 - ✅ Database connected for migration
+2026-04-17 17:22:19.319 | INFO     | app.database.migration:auto_migrate_if_needed:174 - Database already has 3 sessions, skipping migration
+2026-04-17 17:22:19.319 | INFO     | app.chat.database_session_manager:__init__:44 - ✅ Database already connected, reusing existing connection
+2026-04-17 17:22:19.319 | INFO     | app.chat.database_session_manager:__init__:49 - ✅ Database Session Manager initialized
+2026-04-17 17:22:19.320 | INFO     | app.chat.http_server:__init__:92 - ✅ Session Manager initialized
+2026-04-17 17:22:19.320 | INFO     | app.chat.http_server:__init__:110 - Static files directory: /Users/jerry/PycharmProjects/Gravix/web/static
+2026-04-17 17:22:19.320 | INFO     | __main__:start_server:141 - 
+============================================================
+2026-04-17 17:22:19.320 | INFO     | __main__:start_server:142 - 🚀 Gravix Services Ready!
+2026-04-17 17:22:19.320 | INFO     | __main__:start_server:143 - ============================================================
+2026-04-17 17:22:19.321 | INFO     | __main__:start_server:144 - 🌐 Web UI: http://localhost:8765
+2026-04-17 17:22:19.321 | INFO     | __main__:start_server:145 - 🔌 WebSocket: ws://localhost:8765
+2026-04-17 17:22:19.321 | INFO     | __main__:start_server:148 - 🤖 LLM Provider: openai
+2026-04-17 17:22:19.321 | INFO     | __main__:start_server:149 - 📦 LLM Model: Qwen3-32B
+2026-04-17 17:22:19.321 | INFO     | __main__:start_server:154 - ⚡ MCP Servers: dataworks
+2026-04-17 17:22:19.321 | INFO     | __main__:start_server:156 - 
+💡 Open your browser and visit: http://localhost:8765
+2026-04-17 17:22:19.322 | INFO     | __main__:start_server:157 - ============================================================
+
+2026-04-17 17:22:19.323 | INFO     | app.chat.http_server:start:891 - ✅ HTTP server started on http://0.0.0.0:8765
+2026-04-17 17:22:19.323 | INFO     | app.chat.http_server:start:892 - ✅ WebSocket endpoint: ws://0.0.0.0:8765/ws
+2026-04-17 17:22:19.323 | INFO     | app.chat.http_server:start:893 - ✅ Session API available at /api/sessions
+2026-04-17 17:22:19.323 | INFO     | app.chat.http_server:start:894 - ✅ Open browser: http://localhost:8765
+2026-04-17 17:22:21.246 | INFO     | app.chat.http_server:handle_websocket:277 - New WebSocket client connected: 5198164304
+2026-04-17 17:22:22.215 | INFO     | app.chat.http_server:handle_websocket:277 - New WebSocket client connected: 5198208144
+2026-04-17 17:22:22.227 | INFO     | app.chat.http_server:handle_websocket:277 - New WebSocket client connected: 5198213200
+2026-04-17 17:22:27.774 | INFO     | app.chat.http_server:handle_websocket:318 - Client 5198164304 disconnected
+2026-04-17 17:22:27.919 | INFO     | app.chat.http_server:handle_websocket:277 - New WebSocket client connected: 5198116816
+2026-04-17 17:22:29.636 | INFO     | app.chat.database_session_manager:switch_session:175 - Switched to session: 1d6b0060-cd78-47c6-a023-5cec21725fc6

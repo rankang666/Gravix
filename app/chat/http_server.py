@@ -19,6 +19,7 @@ from aiohttp import web, WSMessage, WSMsgType
 
 from app.chat.session import ChatSession
 from app.chat.session_manager import SessionManager
+from app.chat.database_session_manager import DatabaseSessionManager
 from app.chat.integration.skills_bridge import SkillsBridge
 from app.chat.integration.mcp_bridge import MCPBridge
 from app.chat.tool_calling import ToolCallParser, ToolExecutor
@@ -26,6 +27,8 @@ from app.llm.service import LLMService
 from app.llm.base import Message
 from app.utils.logger import logger
 from app.utils.reloader import HotReloadManager
+from app.database import DatabaseAdapterFactory
+from app.database.migration import auto_migrate_if_needed
 
 
 class ChatHTTPServer:
@@ -67,9 +70,26 @@ class ChatHTTPServer:
         self.sessions: Dict[str, Set] = {}
         self.clients: Dict[str, Set] = {}
 
-        # Session Manager
-        self.session_manager = SessionManager()
-        logger.info(f"✅ Session Manager initialized with {len(self.session_manager.sessions)} sessions")
+        # Database Session Manager
+        import os
+        use_database = os.getenv('USE_DATABASE', 'true').lower() == 'true'
+
+        if use_database:
+            # Create database adapter from environment
+            db_adapter = DatabaseAdapterFactory.create_from_env()
+            logger.info("✅ Using database storage")
+
+            # Auto-migrate from JSON if needed
+            auto_migrate_if_needed(db_adapter)
+
+            # Use database session manager
+            self.session_manager = DatabaseSessionManager(db_adapter)
+        else:
+            # Fall back to JSON file storage
+            logger.info("ℹ️  Using JSON file storage")
+            self.session_manager = SessionManager()
+
+        logger.info(f"✅ Session Manager initialized")
 
         # Plan confirmation mode
         self.require_confirmation = True
@@ -92,7 +112,7 @@ class ChatHTTPServer:
             logger.info("♻️  Hot reload enabled - Server will auto-reload on code changes")
 
     def _build_system_prompt(self) -> str:
-        """Build system prompt (same as original)"""
+        """Build system prompt with session context"""
         prompt = """You are Gravix, a helpful AI assistant with access to various tools.
 
 ## Plan-First Mode: Human-in-the-Loop Execution
@@ -150,6 +170,29 @@ class ChatHTTPServer:
                 logger.warning(f"Failed to get MCP info: {e}")
                 prompt += "- MCP system available\n\n"
 
+        # Add session context information
+        prompt += "### Session Context\n\n"
+        try:
+            current_session = self.session_manager.get_current_session()
+            if current_session:
+                prompt += f"**Current Session:** {current_session.title}\n"
+                prompt += f"**Messages:** {current_session.get_message_count()}\n"
+
+            # Get recent sessions for context
+            recent_sessions = self.session_manager.get_recent_sessions(limit=3)
+            if recent_sessions:
+                prompt += "\n**Recent Sessions:**\n"
+                for i, sess in enumerate(recent_sessions, 1):
+                    prompt += f"{i}. {sess['title']} ({sess['message_count']} messages)\n"
+                    prompt += f"   Preview: {sess['preview'][:100]}...\n"
+                prompt += "\nYou can reference these sessions using commands like:\n"
+                prompt += "- `/sessions_list` - List all sessions\n"
+                prompt += "- `/session_context <ID>` - Load content from a specific session\n"
+                prompt += "- `/session_search <keyword>` - Search for sessions\n"
+        except Exception as e:
+            logger.warning(f"Failed to get session context: {e}")
+            prompt += "- Session context available\n"
+
         prompt += """
 ## Response Style
 
@@ -158,6 +201,7 @@ class ChatHTTPServer:
 - Show tool calls exactly as they will be executed
 - Explain the purpose of each step
 - Wait for user confirmation before executing
+- When user mentions "previous conversations" or "history", suggest using `/sessions_list` or `/session_search`
 
 Remember: **Plan first, execute only after confirmation!**
 """
@@ -513,27 +557,30 @@ Remember: **Plan first, execute only after confirmation!**
         command = message.strip().lower()
 
         if command == '/help':
-            return """**Available Commands:**
+            return """**可用命令:**
 
 📖 **/help** - 显示此帮助信息
 🔧 **/skills** - 列出所有可用技能
 ⚡ **/mcp_list** - 列出已连接的 MCP 服务器
 🔧 **/mcp_call tool_name {params}** - 调用 MCP 工具
-📊 **/history** - 显示对话历史
-🗑️ **/clear** - 清空对话历史
+📊 **/history** - 显示当前对话历史
+🗑️ **/clear** - 清空当前对话历史
 
-**MCP Tool Call Examples:**
+**📝 会话管理:**
+/sessions_list - 列出所有会话
+/sessions_new <标题> - 创建新会话
+/sessions_recent - 显示最近会话
+/session_context <ID> [行数] - 加载会话上下文
+/session_search <关键词> - 搜索会话
+
+**MCP 工具调用示例:**
 - `/mcp_call dataworks.ListProjects {}`
 - `/mcp_call dataworks.ConvertTimestamps {"Timestamps": [1714567890]}`
-- `/mcp_call dataworks.ToTimestamps {"DateTimeDisplay": ["2024-05-01"]}`
 
-**Tool Call Format (in chat):**
-`::tool_name{params}` 或 `::server.tool_name{params}`
-
-**Examples:**
-- `::calculate{expression=2+2}`
-- `::dataworks.ListProjects{}`
-- `::maxcompute.list_tables{}`
+**会话上下文示例:**
+- `/sessions_list` - 查看所有会话
+- `/session_context <session_id>` - 加载指定会话的内容
+- `/session_search python` - 搜索包含 'python' 的会话
 """
 
         elif command == '/skills':
@@ -621,6 +668,88 @@ Remember: **Plan first, execute only after confirmation!**
                 logger.error(f"Error calling MCP tool: {e}")
                 return f"❌ Error calling MCP tool: {str(e)}\n\nUse `/mcp_list` to see available servers."
 
+        elif command == '/sessions_list':
+            """列出所有会话"""
+            sessions = self.session_manager.list_sessions()
+            if not sessions:
+                return "📝 **暂无会话**\n\n使用 `/sessions_new` 创建新会话"
+
+            result = ["📝 **所有会话:**\n"]
+            for i, s in enumerate(sessions, 1):
+                current = " (当前)" if s['is_current'] else ""
+                result.append(
+                    f"{i}. **{s['title']}**{current}\n"
+                    f"   - 预览: {s['preview']}\n"
+                    f"   - 消息数: {s['message_count']}\n"
+                    f"   - ID: `{s['session_id']}`\n"
+                )
+
+            return "\n".join(result)
+
+        elif command.startswith('/sessions_new '):
+            """创建新会话"""
+            parts = message.split(' ', 1)
+            title = parts[1] if len(parts) > 1 else None
+
+            session = self.session_manager.create_session(title)
+            return f"✅ **新会话已创建:**\n\n- 标题: {session.title}\n- ID: `{session.session_id}`"
+
+        elif command.startswith('/session_context '):
+            """加载会话上下文"""
+            try:
+                # Extract session ID and optional lines limit
+                params = message[len('/session_context '):].strip().split()
+                session_id = params[0]
+                max_lines = int(params[1]) if len(params) > 1 else 10
+
+                context = self.session_manager.get_session_context(session_id, max_lines)
+                if context:
+                    return f"📋 **会话上下文:**\n\n{context}"
+                else:
+                    return f"❌ 未找到会话或会话为空: `{session_id}`"
+            except Exception as e:
+                return f"❌ 加载会话上下文失败: {e}\n\n用法: `/session_context <session_id> [lines]`"
+
+        elif command.startswith('/session_search '):
+            """搜索会话"""
+            try:
+                keyword = message[len('/session_search '):].strip()
+                results = self.session_manager.search_sessions(keyword)
+
+                if not results:
+                    return f"🔍 **搜索结果:**\n\n未找到包含 '{keyword}' 的会话"
+
+                output = [f"🔍 **包含 '{keyword}' 的会话:**\n"]
+                for i, r in enumerate(results, 1):
+                    current = " (当前)" if r['is_current'] else ""
+                    output.append(
+                        f"{i}. **{r['title']}**{current}\n"
+                        f"   - 预览: {r['preview']}\n"
+                        f"   - ID: `{r['session_id']}`\n"
+                    )
+
+                return "\n".join(output)
+            except Exception as e:
+                return f"❌ 搜索失败: {e}\n\n用法: `/session_search <keyword>`"
+
+        elif command == '/sessions_recent':
+            """显示最近会话"""
+            recent = self.session_manager.get_recent_sessions(limit=5)
+
+            if not recent:
+                return "📝 **最近会话:**\n\n暂无其他会话"
+
+            output = ["📝 **最近会话:**\n"]
+            for i, r in enumerate(recent, 1):
+                output.append(
+                    f"{i}. **{r['title']}**\n"
+                    f"   - 预览: {r['preview']}\n"
+                    f"   - 消息数: {r['message_count']}\n"
+                    f"   - ID: `{r['session_id']}`\n"
+                )
+
+            return "\n".join(output)
+
         else:
             return f"❌ Unknown command: {message}\n\nUse /help to see available commands."
 
@@ -676,9 +805,9 @@ Remember: **Plan first, execute only after confirmation!**
         """GET /api/sessions/{session_id} - Get session details"""
         try:
             session_id = request.match_info['session_id']
-            session = self.session_manager.get_session(session_id)
-            if session:
-                return web.json_response(session.to_dict())
+            session_dict = self.session_manager.get_session_dict(session_id)
+            if session_dict:
+                return web.json_response(session_dict)
             return web.json_response({'error': 'Session not found'}, status=404)
         except Exception as e:
             logger.error(f"Error getting session: {e}")
@@ -703,8 +832,8 @@ Remember: **Plan first, execute only after confirmation!**
                 success = self.session_manager.switch_session(session_id)
 
             if success:
-                session = self.session_manager.get_session(session_id)
-                return web.json_response(session.to_dict())
+                session_dict = self.session_manager.get_session_dict(session_id)
+                return web.json_response(session_dict)
             return web.json_response({'error': 'Operation failed'}, status=400)
         except Exception as e:
             logger.error(f"Error updating session: {e}")
@@ -725,9 +854,9 @@ Remember: **Plan first, execute only after confirmation!**
     async def handle_api_current_session(self, request: web.Request):
         """GET /api/sessions/current - Get current session"""
         try:
-            session = self.session_manager.get_current_session()
-            if session:
-                return web.json_response(session.to_dict())
+            session_dict = self.session_manager.get_current_session_dict()
+            if session_dict:
+                return web.json_response(session_dict)
             return web.json_response({'error': 'No current session'}, status=404)
         except Exception as e:
             logger.error(f"Error getting current session: {e}")

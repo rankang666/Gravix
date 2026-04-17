@@ -229,6 +229,107 @@ class SessionManager:
         except Exception as e:
             logger.error(f"Failed to save sessions to {self.storage_path}: {e}")
 
+    def get_session_context(self, session_id: str, max_messages: int = 10) -> Optional[str]:
+        """
+        Get session context as formatted text
+
+        Args:
+            session_id: Session ID
+            max_messages: Maximum number of messages to include
+
+        Returns:
+            Formatted context string or None
+        """
+        session = self.get_session(session_id)
+        if not session:
+            return None
+
+        history = session.get_history(limit=max_messages)
+        if not history:
+            return None
+
+        # Format context
+        lines = [
+            f"## 会话: {session.title}",
+            f"创建时间: {session.created_at.strftime('%Y-%m-%d %H:%M')}",
+            f"消息数: {session.get_message_count()}",
+            ""
+        ]
+
+        for msg in history:
+            role_name = "用户" if msg['role'] == 'user' else "助手"
+            lines.append(f"**{role_name}**: {msg['content']}")
+
+        return "\n".join(lines)
+
+    def search_sessions(self, keyword: str) -> List[Dict[str, Any]]:
+        """
+        Search for sessions containing keyword
+
+        Args:
+            keyword: Search keyword
+
+        Returns:
+            List of matching sessions with context
+        """
+        results = []
+        keyword_lower = keyword.lower()
+
+        for session_id, session in self.sessions.items():
+            # Search in title and messages
+            found = False
+
+            # Check title
+            if keyword_lower in session.title.lower():
+                found = True
+            else:
+                # Check messages
+                for msg in session.messages:
+                    if keyword_lower in msg.content.lower():
+                        found = True
+                        break
+
+            if found:
+                results.append({
+                    'session_id': session_id,
+                    'title': session.title,
+                    'preview': session.get_preview(),
+                    'created_at': session.created_at.isoformat(),
+                    'message_count': session.get_message_count(),
+                    'is_current': session_id == self.current_session_id
+                })
+
+        # Sort by last activity
+        results.sort(key=lambda x: self.sessions[x['session_id']].last_activity, reverse=True)
+        return results
+
+    def get_recent_sessions(self, limit: int = 5) -> List[Dict[str, Any]]:
+        """
+        Get recent sessions excluding current
+
+        Args:
+            limit: Maximum number of sessions to return
+
+        Returns:
+            List of recent sessions
+        """
+        sessions = [
+            {
+                'session_id': sid,
+                'title': session.title,
+                'preview': session.get_preview(),
+                'created_at': session.created_at.isoformat(),
+                'last_activity': session.last_activity.isoformat(),
+                'message_count': session.get_message_count()
+            }
+            for sid, session in self.sessions.items()
+            if sid != self.current_session_id
+        ]
+
+        # Sort by last activity and limit
+        sessions.sort(key=lambda x: x['last_activity'], reverse=True)
+        return sessions[:limit]
+
     def __repr__(self) -> str:
         return (
             f"<SessionManager(sessions={len(self.sessions)}, "
