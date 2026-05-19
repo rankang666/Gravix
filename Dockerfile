@@ -31,13 +31,12 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
 # Expose ports
-# 8001 - WebSocket chat server
-# 8000 - REST API
-EXPOSE 8001 8000
+# 8001 - WebSocket chat server and REST API
+EXPOSE 8001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:8001/health || exit 1
 
 # Run the application
 CMD ["python", "run_all.py"]
