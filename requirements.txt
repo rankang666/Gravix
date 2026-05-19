@@ -17,6 +17,9 @@ aiofiles==23.2.1
 # Data Validation
 pydantic==2.5.0
 
+# MaxCompute/ODPS SDK
+pyodps>=0.12.0
+
 # Multipart forms
 python-multipart==0.0.6
 
