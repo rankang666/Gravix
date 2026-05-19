@@ -8,7 +8,7 @@ services:
     container_name: gravix-app
     restart: unless-stopped
     ports:
-      - "8765:8765"  # WebSocket chat server
+      - "8001:8001"  # WebSocket chat server and REST API
       - "8000:8000"   # REST API
     environment:
       # LLM Configuration

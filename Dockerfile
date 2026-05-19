@@ -28,9 +28,9 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
 # Expose ports
-# 8765 - WebSocket chat server
+# 8001 - WebSocket chat server
 # 8000 - REST API
-EXPOSE 8765 8000
+EXPOSE 8001 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \

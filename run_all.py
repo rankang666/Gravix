@@ -130,7 +130,7 @@ async def start_server():
 
     chat_server = ChatHTTPServer(
         host="0.0.0.0",
-        port=8765,
+        port=8001,
         skills_bridge=skills_bridge,
         mcp_bridge=mcp_bridge,
         llm_service=llm_service,
@@ -141,8 +141,8 @@ async def start_server():
     logger.info("\n" + "=" * 60)
     logger.info("🚀 Gravix Services Ready!")
     logger.info("=" * 60)
-    logger.info(f"🌐 Web UI: http://localhost:8765")
-    logger.info(f"🔌 WebSocket: ws://localhost:8765")
+    logger.info(f"🌐 Web UI: http://localhost:8001")
+    logger.info(f"🔌 WebSocket: ws://localhost:8001")
 
     if llm_service:
         logger.info(f"🤖 LLM Provider: {llm_provider}")
@@ -153,7 +153,7 @@ async def start_server():
     if mcp_bridge:
         logger.info(f"⚡ MCP Servers: {', '.join(connected_servers)}")
 
-    logger.info("\n💡 Open your browser and visit: http://localhost:8765")
+    logger.info("\n💡 Open your browser and visit: http://localhost:8001")
     logger.info("=" * 60 + "\n")
 
     try:
