@@ -39,8 +39,12 @@ services:
       - ./logs:/app/logs
       # Mount web static files for development
       - ./web/static:/app/web/static
-      # Optional: Mount source code for development
-      # - ./app:/app/app
+      # Mount source code for development (hot reload)
+      - ./app:/app/app
+      - ./skills:/app/skills
+      - ./run_all.py:/app/run_all.py
+      # Mount requirements if you need to test new dependencies
+      - ./requirements.txt:/app/requirements.txt
     networks:
       - gravix-network
     healthcheck:
