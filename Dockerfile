@@ -8,10 +8,12 @@ WORKDIR /app
 # Use Aliyun mirror for faster downloads in China
 RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources \
     && apt-get update && apt-get install -y \
-    nodejs \
-    npm \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    # Install Node.js using NodeSource repository for latest version
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npx
 
 # Copy requirements first for better caching
 COPY requirements.txt .
