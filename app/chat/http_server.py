@@ -866,17 +866,20 @@ Remember: **Plan first, execute only after confirmation!**
 
     async def handle_health_check(self, request):
         """GET /health - Health check endpoint"""
-        return web.json_response({
+        response = web.json_response({
             'status': 'healthy',
             'service': 'gravix',
             'version': '1.0.0',
             'timestamp': self.get_current_timestamp()
         })
+        # Add CORS headers
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        return response
 
     async def start(self):
         """Start HTTP and WebSocket servers with optional hot reload"""
-        # Create HTTP app with CORS middleware
-        app = web.Application(middlewares=[self.cors_middleware])
+        # Create HTTP app
+        app = web.Application()
 
         # Static files and WebSocket
         app.router.add_get('/', self.handle_http)
@@ -893,16 +896,6 @@ Remember: **Plan first, execute only after confirmation!**
         app.router.add_get('/api/sessions/{session_id}', self.handle_api_get_session)
         app.router.add_patch('/api/sessions/{session_id}', self.handle_api_update_session)
         app.router.add_delete('/api/sessions/{session_id}', self.handle_api_delete_session)
-
-    @web.middleware
-    async def cors_middleware(self, request, handler):
-        """CORS middleware to allow cross-origin requests"""
-        response = await handler(request)
-        # Add CORS headers
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-        return response
 
         # Start HTTP server
         runner = web.AppRunner(app)
