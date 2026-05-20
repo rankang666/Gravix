@@ -915,7 +915,12 @@ Remember: **Plan first, execute only after confirmation!**
         logger.info(f"✅ HTTP server started on http://{self.host}:{self.port}")
         logger.info(f"✅ WebSocket endpoint: ws://{self.host}:{self.port}/ws")
         logger.info(f"✅ Session API available at /api/sessions")
-        logger.info(f"✅ Open browser: http://localhost:{self.port}")
+        logger.info(f"✅ Server listening on: {self.host}:{self.port}")
+
+        # 重要：显示实际监听的地址
+        if self.host == "0.0.0.0":
+            logger.info(f"✅ Public access: http://<YOUR-IP>:{self.port}")
+            logger.info(f"✅ WebSocket: ws://<YOUR-IP>:{self.port}/ws")
 
         # Start hot reload if enabled
         if self.enable_hot_reload:

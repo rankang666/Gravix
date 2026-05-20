@@ -141,8 +141,9 @@ async def start_server():
     logger.info("\n" + "=" * 60)
     logger.info("🚀 Gravix Services Ready!")
     logger.info("=" * 60)
-    logger.info(f"🌐 Web UI: http://localhost:8001")
-    logger.info(f"🔌 WebSocket: ws://localhost:8001")
+    logger.info(f"🌐 Web UI: http://0.0.0.0:8001")
+    logger.info(f"🌐 Public access: http://<YOUR-PUBLIC-IP>:8001")
+    logger.info(f"🔌 WebSocket: ws://<YOUR-IP>:8001/ws")
 
     if llm_service:
         logger.info(f"🤖 LLM Provider: {llm_provider}")
