@@ -9,11 +9,11 @@ git pull origin main
 
 # 停止旧容器
 echo "⏹️  停止旧容器..."
-docker compose down
+docker-compose down
 
 # 重新构建并启动
 echo "🔨 重新构建并启动..."
-docker compose up -d --build
+docker-compose up -d --build
 
 # 等待服务启动
 echo "⏳ 等待服务启动..."
@@ -25,7 +25,7 @@ if curl -f http://localhost:8001/health; then
     echo "✅ 部署成功！"
 else
     echo "❌ 部署失败，请检查日志"
-    docker compose logs gravix
+    docker-compose logs gravix
     exit 1
 fi
 
