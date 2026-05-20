@@ -107,12 +107,13 @@ python3 run_all.py
 #### 方式二：仅启动REST API
 
 ```bash
-python3 start_api.py
+python3 run_all.py
 ```
 
-API服务将在 http://localhost:8000 启动
-- API文档: http://localhost:8000/docs
-- Web界面: http://localhost:8000/ui
+服务将在 http://localhost:8001 启动
+- Web界面: http://localhost:8001
+- WebSocket: ws://localhost:8001/ws
+- 健康检查: http://localhost:8001/health
 
 ## 📖 使用指南
 
@@ -184,13 +185,13 @@ class MySkill(BaseSkill):
 #### 1. 列出所有Skills
 
 ```bash
-curl http://localhost:8000/api/skills/
+curl http://localhost:8001/api/skills/
 ```
 
 #### 2. 执行Skill
 
 ```bash
-curl -X POST http://localhost:8000/api/skills/execute \
+curl -X POST http://localhost:8001/api/skills/execute \
   -H "Content-Type: application/json" \
   -d '{
     "skill_id": "echo",
@@ -201,7 +202,7 @@ curl -X POST http://localhost:8000/api/skills/execute \
 #### 3. 获取Skill信息
 
 ```bash
-curl http://localhost:8000/api/skills/echo
+curl http://localhost:8001/api/skills/echo
 ```
 
 ### WebSocket Chat使用
@@ -333,8 +334,8 @@ print(stats)
 ## 📝 API文档
 
 启动API服务后访问：
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+- Swagger UI: http://localhost:8001/docs
+- ReDoc: http://localhost:8001/redoc
 
 ## 🤝 贡献
 

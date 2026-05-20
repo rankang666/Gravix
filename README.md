@@ -54,9 +54,9 @@ docker-compose up -d
 docker-compose logs -f
 
 # 4. 访问应用
-# Web UI: 打开 web/static/index.html
-# WebSocket: ws://localhost:8765
-# API文档: http://localhost:8000/docs
+# Web UI: http://localhost:8001
+# WebSocket: ws://localhost:8001/ws
+# 健康检查: http://localhost:8001/health
 ```
 
 **Docker优势：**
@@ -117,10 +117,9 @@ python start_api.py
 
 ### 4. 访问应用
 
-- **Web UI**: 打开浏览器访问 `file:///path/to/web/static/index.html`
-  或直接双击 `web/static/index.html` 文件
-- **API文档**: http://localhost:8000/docs
-- **WebSocket**: ws://localhost:8765
+- **Web UI**: 打开浏览器访问 `http://localhost:8001`
+- **WebSocket**: ws://localhost:8001/ws
+- **健康检查**: http://localhost:8001/health
 
 ## 📖 使用指南
 

@@ -43,10 +43,9 @@ docker-compose ps
 
 ### 3. 访问应用
 
-- **Web UI**: 在浏览器中打开 `web/static/index.html`
-- **WebSocket**: ws://localhost:8765
-- **API文档**: http://localhost:8000/docs
-- **健康检查**: http://localhost:8000/health
+- **Web UI**: http://localhost:8001
+- **WebSocket**: ws://localhost:8001/ws
+- **健康检查**: http://localhost:8001/health
 
 ## 📦 构建镜像
 
@@ -69,8 +68,7 @@ docker build -t gravix:latest .
 # 运行容器
 docker run -d \
   --name gravix \
-  -p 8765:8765 \
-  -p 8000:8000 \
+  -p 8001:8001 \
   --env-file .env \
   -v $(pwd)/logs:/app/logs \
   gravix:latest
@@ -168,7 +166,7 @@ COPY . .
 ENV PATH=/root/.local/bin:$PATH
 ENV PYTHONUNBUFFERED=1
 
-EXPOSE 8765 8000
+EXPOSE 8001
 
 CMD ["python", "run_all.py"]
 ```
@@ -186,8 +184,7 @@ services:
     container_name: gravix-prod
     restart: always
     ports:
-      - "8765:8765"
-      - "8000:8000"
+      - "8001:8001"
     env_file:
       - .env
     volumes:
@@ -238,13 +235,11 @@ docker inspect --format='{{.State.Health.Status}}' gravix-app
 
 ```bash
 # 查看端口占用
-lsof -i :8765
-lsof -i :8000
+lsof -i :8001
 
 # 修改docker-compose.yml中的端口映射
 ports:
-  - "8766:8765"  # 使用不同端口
-  - "8001:8000"
+  - "8002:8001"  # 使用不同端口避免冲突
 ```
 
 ### 环境变量未生效
@@ -309,7 +304,7 @@ docker-compose logs -f gravix > logs/gravix.log
 
 ```bash
 # 手动健康检查
-curl http://localhost:8000/health
+curl http://localhost:8001/health
 
 # 查看健康状态
 docker inspect --format='{{json .State.Health}}' gravix-app | jq
@@ -423,6 +418,6 @@ jobs:
 遇到问题？
 
 1. 查看日志：`docker-compose logs -f`
-2. 检查健康状态：`curl http://localhost:8000/health`
+2. 检查健康状态：`curl http://localhost:8001/health`
 3. 查看容器状态：`docker-compose ps`
 4. 提交Issue：https://github.com/rankang666/Gravix/issues

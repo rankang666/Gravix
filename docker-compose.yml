@@ -8,8 +8,7 @@ services:
     container_name: gravix-app
     restart: unless-stopped
     ports:
-      - "8001:8001"  # WebSocket chat server and REST API
-      - "8000:8000"   # REST API
+      - "8001:8001"  # WebSocket chat server and REST API (HTTP only)
     environment:
       # LLM Configuration
       - LLM_PROVIDER=claude
@@ -40,7 +39,7 @@ services:
     networks:
       - gravix-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
       interval: 30s
       timeout: 10s
       retries: 3
