@@ -214,23 +214,37 @@ class SkillRegistry:
                 except ImportError:
                     logger.warning(f"pyyaml not installed, using default metadata for {skill_md}")
 
-            # Create a documentation skill class dynamically
-            class DocumentationSkill(BaseSkill):
-                skill_id = skill_id  # Use the skill_id variable defined above
-                name = f"{skill_emoji} {skill_name}"
-                description = skill_description
-                version = skill_version
-                category = "documentation"
+            # Create a documentation skill class dynamically using type()
+            # This avoids variable scope issues in class definitions
+            def init_doc_skill():
+                # Capture variables in closure
+                captured_skill_id = skill_id
+                captured_skill_name = skill_name
+                captured_skill_emoji = skill_emoji
+                captured_skill_description = skill_description
+                captured_skill_version = skill_version
+                captured_content = content
 
-                async def execute(self, **kwargs):
-                    """Return the documentation content"""
-                    return {
-                        "success": True,
-                        "type": "documentation",
-                        "skill_id": self.skill_id,  # Use class attribute
-                        "content": content,
-                        "message": f"See documentation for {skill_name}"
-                    }
+                class DocumentationSkill(BaseSkill):
+                    skill_id = captured_skill_id
+                    name = f"{captured_skill_emoji} {captured_skill_name}"
+                    description = captured_skill_description
+                    version = captured_skill_version
+                    category = "documentation"
+
+                    async def execute(self, **kwargs):
+                        """Return the documentation content"""
+                        return {
+                            "success": True,
+                            "type": "documentation",
+                            "skill_id": self.skill_id,
+                            "content": captured_content,
+                            "message": f"See documentation for {captured_skill_name}"
+                        }
+
+                return DocumentationSkill
+
+            DocumentationSkill = init_doc_skill()
 
             # Register the documentation skill
             self._skills[skill_id] = DocumentationSkill
