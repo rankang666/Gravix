@@ -870,7 +870,7 @@ Remember: **Plan first, execute only after confirmation!**
             'status': 'healthy',
             'service': 'gravix',
             'version': '1.0.0',
-            'timestamp': self.get_current_timestamp()
+            'timestamp': datetime.utcnow().isoformat()
         })
         # Add CORS headers
         response.headers['Access-Control-Allow-Origin'] = '*'
