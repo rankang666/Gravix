@@ -12,6 +12,7 @@
 import importlib
 import importlib.util
 import inspect
+import re
 from pathlib import Path
 from typing import Dict, List, Type, Optional, Any
 from app.skills.base import BaseSkill
@@ -24,20 +25,23 @@ class SkillRegistry:
 
     The registry loads skills from a directory tree structure following Claude best practices:
 
-    skills/
-    ├── echo/
-    │   ├── SKILL.md           # Documentation (loaded when triggered)
-    │   └── scripts/
-    │       └── echo.py       # Implementation (executed, not loaded)
-    ├── calculate/
-    │   ├── SKILL.md
-    │   └── scripts/
-    │       └── calculate.py
-    └── ...
+    Supports two types of skills:
+
+    1. **Code Skills** (with Python implementation):
+       skills/
+       ├── echo/
+       │   ├── SKILL.md           # Documentation
+       │   └── scripts/
+       │       └── echo.py       # Implementation
+
+    2. **Documentation Skills** (docs-only):
+       skills/
+       ├── guide/
+       │   └── SKILL.md          # Documentation + metadata (no scripts/)
 
     Each skill directory structure:
-    - SKILL.md          - Main documentation and metadata
-    - scripts/          - Implementation scripts
+    - SKILL.md          - Main documentation and metadata (required)
+    - scripts/          - Implementation scripts (optional for code skills)
     - tests/            - Test files (optional)
     - examples/         - Example usage (optional)
 
@@ -89,26 +93,31 @@ class SkillRegistry:
 
         Args:
             skill_dir: Skill directory path (e.g., skills/echo/)
+
+        Supports two types of skills:
+        1. Code skills: Has scripts/ directory with .py files
+        2. Documentation skills: Only has SKILL.md (provides info/templates)
         """
         skill_name = skill_dir.name
         scripts_dir = skill_dir / 'scripts'
+        skill_md = skill_dir / 'SKILL.md'
 
-        if not scripts_dir.exists():
-            logger.warning(f"Skill '{skill_name}' has no scripts/ directory")
-            return
+        # Type 1: Code skills with Python implementation
+        if scripts_dir.exists():
+            py_files = list(scripts_dir.glob('*.py'))
+            if py_files:
+                # Load Python code skills
+                for py_file in py_files:
+                    if py_file.name.startswith('_'):
+                        continue
+                    self._load_skill_from_file(skill_name, py_file)
+                return
 
-        # Find Python files in scripts/ directory
-        py_files = list(scripts_dir.glob('*.py'))
-        if not py_files:
-            logger.warning(f"Skill '{skill_name}' has no Python files in scripts/")
-            return
-
-        # Load each Python file
-        for py_file in py_files:
-            if py_file.name.startswith('_'):
-                continue
-
-            self._load_skill_from_file(skill_name, py_file)
+        # Type 2: Documentation-only skills
+        if skill_md.exists():
+            self._load_documentation_skill(skill_dir, skill_md)
+        else:
+            logger.warning(f"Skill '{skill_name}' has neither scripts/ nor SKILL.md")
 
     def _load_skill_from_file(self, skill_name: str, py_file: Path):
         """
@@ -163,6 +172,85 @@ class SkillRegistry:
 
         except Exception as e:
             logger.error(f"Failed to load skill from {py_file}: {e}")
+
+    def _load_documentation_skill(self, skill_dir: Path, skill_md: Path):
+        """
+        Load a documentation-only skill (no Python code)
+
+        Args:
+            skill_dir: Skill directory path
+            skill_md: Path to SKILL.md file
+        """
+        skill_name = skill_dir.name
+
+        # Set default values before try block to avoid scope issues
+        skill_id = skill_name
+        skill_version = '1.0.0'
+        skill_description = f'Documentation skill: {skill_name}'
+        skill_emoji = '📄'
+
+        try:
+            # Read SKILL.md and parse frontmatter
+            content = skill_md.read_text(encoding='utf-8')
+            logger.debug(f"Processing documentation skill: {skill_name}, skill_id: {skill_id}")
+
+            # Extract YAML frontmatter between --- markers
+            frontmatter_match = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
+            if frontmatter_match:
+                try:
+                    import yaml
+                    try:
+                        frontmatter = yaml.safe_load(frontmatter_match.group(1))
+                        if frontmatter:
+                            skill_id = frontmatter.get('name', skill_name)
+                            skill_version = frontmatter.get('version', '1.0.0')
+                            skill_description = frontmatter.get('description', skill_description)
+                            try:
+                                skill_emoji = frontmatter.get('metadata', {}).get('openclaw', {}).get('emoji', '📄')
+                            except (AttributeError, KeyError):
+                                pass
+                    except yaml.YAMLError:
+                        logger.warning(f"Failed to parse frontmatter in {skill_md}")
+                except ImportError:
+                    logger.warning(f"pyyaml not installed, using default metadata for {skill_md}")
+
+            # Create a documentation skill class dynamically
+            class DocumentationSkill(BaseSkill):
+                skill_id = skill_id  # Use the skill_id variable defined above
+                name = f"{skill_emoji} {skill_name}"
+                description = skill_description
+                version = skill_version
+                category = "documentation"
+
+                async def execute(self, **kwargs):
+                    """Return the documentation content"""
+                    return {
+                        "success": True,
+                        "type": "documentation",
+                        "skill_id": self.skill_id,  # Use class attribute
+                        "content": content,
+                        "message": f"See documentation for {skill_name}"
+                    }
+
+            # Register the documentation skill
+            self._skills[skill_id] = DocumentationSkill
+            self._skill_metadata[skill_id] = {
+                'name': DocumentationSkill.name,
+                'description': skill_description,
+                'version': skill_version,
+                'category': 'documentation',
+                'skill_dir': f"skills/{skill_name}",
+                'documentation': f"skills/{skill_name}/SKILL.md",
+                'type': 'documentation'
+            }
+
+            logger.info(
+                f"Registered documentation skill: {skill_id} ({DocumentationSkill.name}) "
+                f"from SKILL.md"
+            )
+
+        except Exception as e:
+            logger.error(f"Failed to load documentation skill from {skill_md}: {e}")
 
     def get_skill(self, skill_id: str) -> Optional[BaseSkill]:
         """
