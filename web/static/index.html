@@ -788,7 +788,13 @@
         const typingIndicator = document.getElementById('typingIndicator');
 
         function connect() {
-            const wsUrl = 'ws://localhost:8765/ws';
+            // Dynamic WebSocket URL based on current page
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsHost = window.location.hostname;
+            const wsPort = window.location.port || (window.location.protocol === 'https:' ? '443' : '80');
+            const wsUrl = `${wsProtocol}//${wsHost}:${wsPort}/ws`;
+            console.log('Connecting to WebSocket:', wsUrl);
+
             ws = new WebSocket(wsUrl);
 
             ws.onopen = () => {
