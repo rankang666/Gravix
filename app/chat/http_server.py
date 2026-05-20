@@ -881,12 +881,7 @@ Remember: **Plan first, execute only after confirmation!**
         # Create HTTP app
         app = web.Application()
 
-        # Static files and WebSocket
-        app.router.add_get('/', self.handle_http)
-        app.router.add_get('/{path:.*}', self.handle_http)
-        app.router.add_get('/ws', self.handle_websocket)  # WebSocket endpoint
-
-        # Health check
+        # API endpoints (must be before wildcard routes)
         app.router.add_get('/health', self.handle_health_check)
 
         # Session Management API
@@ -896,6 +891,11 @@ Remember: **Plan first, execute only after confirmation!**
         app.router.add_get('/api/sessions/{session_id}', self.handle_api_get_session)
         app.router.add_patch('/api/sessions/{session_id}', self.handle_api_update_session)
         app.router.add_delete('/api/sessions/{session_id}', self.handle_api_delete_session)
+
+        # WebSocket and static files (wildcard routes last)
+        app.router.add_get('/ws', self.handle_websocket)  # WebSocket endpoint
+        app.router.add_get('/', self.handle_http)
+        app.router.add_get('/{path:.*}', self.handle_http)
 
         # Start HTTP server
         runner = web.AppRunner(app)
