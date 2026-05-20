@@ -33,6 +33,8 @@ services:
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
     volumes:
+      # Mount .env file
+      - ./.env:/app/.env
       # Mount logs directory
       - ./logs:/app/logs
       # Mount web static files for development
